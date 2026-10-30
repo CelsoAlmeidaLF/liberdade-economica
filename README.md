@@ -4,6 +4,13 @@
 
 **Impacto econômico das greves no Brasil.** Simula greves de consumo, de transporte, gerais, de uma categoria e do setor público; mostra o efeito cascata sobre outros setores, quem paga a conta, o efeito nos preços e compara com greves reais documentadas.
 
+## Abas
+- **Simulador:** tipos de greve, resultados, peso na arrecadação e quem paga a conta.
+- **Greves reais** (`#greves`): efeito nos preços, biblioteca de greves, comparação, linha do tempo e referências.
+- **Direitos e limites** (`#direitos`, `DireitosGreve.js`): Lei de Greve, greve no setor público, boicote, bloqueio de estradas (CTB art. 253-A) e demissão por opinião política, cada tema com pode / exige / não pode / consequência e fontes.
+
+No computador as abas ficam no topo; no celular, na barra de baixo junto com IBGE, CSV e Enviar.
+
 ## Tipos de greve (`TiposGreve.js`, `GreveProducaoModel.js`)
 
 | Tipo | Como o impacto é calculado |

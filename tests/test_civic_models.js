@@ -10,6 +10,7 @@ import { TIPOS_GREVE, SETORES_PRODUCAO, ORGAOS_PUBLICOS, setoresDoTipo, obterSet
 import { GreveProducaoModel } from '../src/domain/GreveProducaoModel.js';
 import { DivisaoCusto } from '../src/domain/DivisaoCusto.js';
 import { PIB_REFERENCIA, OTICA_RENDA } from '../src/domain/ArrecadacaoReferencia.js';
+import { DIREITOS } from '../src/domain/DireitosGreve.js';
 
 let passed = 0;
 let failed = 0;
@@ -229,6 +230,12 @@ assert(refs.map(g => g.grupo).join('|') === 'Greves|Efeito nos preços (IPCA 201
 assert(new Set(urlsRefs).size === urlsRefs.length, 'Nenhum link repetido nas referências');
 const todasFontes = new Set([...GREVES.flatMap(g => g.fontes), ...IPCA_2018.fontes, ...REFERENCIAS_BASE].map(f => f.url));
 assert(urlsRefs.length === todasFontes.size && urlsRefs.every(u => todasFontes.has(u)), 'Referências trazem todas as fontes usadas');
+
+// Direitos e limites
+assert(DIREITOS.map(d => d.id).join() === 'greve,publico,boicote,estradas,demissao', 'Guia cobre greve, setor público, boicote, estradas e demissão política');
+assert(DIREITOS.every(d => d.pode.length && d.naoPode.length && d.consequencia && d.fontes.length && d.fontes.every(f => f.url.startsWith('https://'))), 'Cada tema tem pode, não pode, consequência e fontes https');
+assert(DIREITOS.find(d => d.id === 'estradas').consequencia.includes('20 vezes') && DIREITOS.find(d => d.id === 'estradas').consequencia.includes('60 vezes'), 'Bloqueio: multa de 20 vezes e 60 vezes para organizadores (CTB 253-A)');
+assert(DIREITOS.find(d => d.id === 'greve').exige.some(e => e.includes('48 horas')) && DIREITOS.find(d => d.id === 'greve').exige.some(e => e.includes('72 horas')), 'Lei de Greve: aviso de 48 h e 72 h em serviços essenciais');
 
 // 13. Serviço nos três modos
 console.log('\n13. Teste do Serviço por Tipo de Greve');

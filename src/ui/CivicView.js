@@ -3,6 +3,7 @@ import { SETORES } from '../domain/SetorConsumo.js';
 import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js';
 import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js';
 import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js';
+import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js';
 import { SvgIcons } from './SvgIcons.js';
 
 const brl = CivicPressureModel.formatBRL;
@@ -41,7 +42,85 @@ export class CivicView {
     this._renderPrecos();
     this._renderListaCasos();
     this._renderReferencias();
+    this._renderDireitos();
     this._configurarAbas();
+  }
+
+  /**
+   * Aba Direitos e limites: um cartão por tema, com pode / exige / não pode / consequência e fontes
+   */
+  _renderDireitos() {
+    this._texto('lblAvisoDireitos', AVISO_DIREITOS);
+    const indice = this.$('direitosIndice');
+    if (indice) {
+      indice.replaceChildren(...DIREITOS.map(d => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-preset';
+        btn.textContent = d.titulo;
+        btn.addEventListener('click', () => this.$(`direito-${d.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        return btn;
+      }));
+    }
+
+    const lista = this.$('direitosLista');
+    if (!lista) return;
+    const bloco = (classe, titulo, itens) => {
+      if (!itens.length) return null;
+      const div = document.createElement('div');
+      div.className = `direito-bloco ${classe}`;
+      const h = document.createElement('h5');
+      h.textContent = titulo;
+      const ul = document.createElement('ul');
+      itens.forEach(texto => {
+        const li = document.createElement('li');
+        li.textContent = texto;
+        ul.appendChild(li);
+      });
+      div.append(h, ul);
+      return div;
+    };
+
+    lista.replaceChildren(...DIREITOS.map(d => {
+      const card = document.createElement('section');
+      card.className = 'glass-panel direito-card';
+      card.id = `direito-${d.id}`;
+
+      const topo = document.createElement('div');
+      topo.className = 'direito-topo';
+      const icone = document.createElement('span');
+      icone.className = 'direito-icone';
+      icone.innerHTML = SvgIcons[d.icone] || '';
+      const titulos = document.createElement('div');
+      const h = document.createElement('h3');
+      h.textContent = d.titulo;
+      const lei = document.createElement('small');
+      lei.textContent = d.lei;
+      titulos.append(h, lei);
+      topo.append(icone, titulos);
+
+      const resumo = document.createElement('p');
+      resumo.className = 'direito-resumo';
+      resumo.textContent = d.resumo;
+
+      const grade = document.createElement('div');
+      grade.className = 'direito-grade';
+      [bloco('pode', 'Pode', d.pode), bloco('exige', 'A lei exige', d.exige), bloco('nao-pode', 'Não pode', d.naoPode)]
+        .filter(Boolean).forEach(b => grade.appendChild(b));
+
+      const consequencia = document.createElement('p');
+      consequencia.className = 'caso-resultado direito-consequencia';
+      const rotulo = document.createElement('strong');
+      rotulo.textContent = 'Consequência: ';
+      consequencia.append(rotulo, d.consequencia);
+
+      const fontes = document.createElement('ul');
+      fontes.className = 'caso-fontes';
+      this._fontes(fontes, d.fontes);
+
+      card.append(topo, resumo, grade, consequencia, fontes);
+      return card;
+    }));
   }
 
   /**
@@ -105,7 +184,8 @@ export class CivicView {
   }
 
   _abaDoEndereco() {
-    return location.hash === '#greves' ? 'greves' : 'simulador';
+    const nome = location.hash.slice(1);
+    return this.abas.some(a => a.dataset.aba === nome) ? nome : 'simulador';
   }
 
   abrirAba(nome, atualizarEndereco) {
@@ -118,7 +198,9 @@ export class CivicView {
       if (painel) painel.hidden = !ativa;
     });
     if (atualizarEndereco) {
-      history.replaceState(null, '', nome === 'greves' ? '#greves' : location.pathname + location.search);
+      history.replaceState(null, '', nome === 'simulador' ? location.pathname + location.search : `#${nome}`);
+      // Como num app: a aba nova abre do começo
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
     // Gráficos criados em painel escondido ficam sem tamanho: recalcula ao mostrar
     requestAnimationFrame(() => this.chartAdapter.resizeAll());

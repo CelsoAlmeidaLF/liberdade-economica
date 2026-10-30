@@ -422,51 +422,103 @@
 .caso-fontes a:hover { text-decoration: underline; }
 .caso-fontes svg { width: 12px; height: 12px; flex-shrink: 0; }
 
-/* ───────── ABAS ───────── */
-.abas {
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: var(--surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  width: fit-content;
-  max-width: 100%;
-}
-.aba {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 38px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 9px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
-}
-.aba svg { width: 16px; height: 16px; }
-.aba:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.05); }
-.aba[aria-selected="true"] { background: rgba(61, 214, 140, 0.16); color: var(--accent); }
-.aba:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+/* ───────── ABAS NO MENU ───────── */
 .aba-painel { display: flex; flex-direction: column; gap: 1.5rem; }
 
+/* Computador: abas como grupo segmentado no topo, antes dos botões de ação */
+.nav-abas {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border-default);
+  border-radius: calc(var(--radius-sm) + 2px);
+  background: rgba(255, 255, 255, 0.03);
+}
+.nav-abas .aba { border-color: transparent; background: transparent; color: var(--text-secondary); }
+.nav-abas .aba:hover:not(:disabled) { color: var(--text-primary); background: rgba(255, 255, 255, 0.06); }
+.nav-abas .aba[aria-selected="true"] { background: rgba(61, 214, 140, 0.16); color: var(--accent); }
+.aba:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+
+.voltar-topo { display: none; }
+
 @media (max-width: 639px) {
-  /* Abas grudadas logo abaixo do topo, ocupando a largura toda */
-  .abas {
-    position: sticky;
-    top: 56px;
-    z-index: 40;
-    width: 100%;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  /* Celular: as abas entram na barra de baixo junto com IBGE, CSV e Enviar */
+  .header-actions { grid-template-columns: repeat(6, 1fr) !important; }
+  .nav-abas { display: contents; }
+  .header-actions > a.btn { display: none; }
+  .header-actions .nav-abas .aba[aria-selected="true"] {
+    color: var(--accent);
+    background: rgba(61, 214, 140, 0.12);
   }
-  .aba { flex: 1; justify-content: center; padding: 0 8px; }
+  .header-actions .nav-abas .aba[aria-selected="true"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 25%;
+    right: 25%;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--accent);
+  }
+  .header-actions .btn { position: relative; font-size: 0.625rem !important; }
+
+  /* O "Voltar" vai para o topo, ao lado da marca */
+  .voltar-topo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-right: -4px;
+    border-radius: var(--radius-lg);
+    color: var(--text-secondary);
+  }
+  .voltar-topo:active { background: rgba(255, 255, 255, 0.08); }
+  .voltar-topo svg { width: 20px; height: 20px; }
   .aba-painel { gap: 1rem; }
 }
+
+/* ───────── DIREITOS E LIMITES ───────── */
+.direitos-indice { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.direitos-lista { display: flex; flex-direction: column; gap: 1.5rem; }
+.direito-card { scroll-margin-top: 80px; }
+.direito-topo { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.direito-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(61, 214, 140, 0.12);
+  color: var(--accent);
+}
+.direito-icone svg { width: 22px; height: 22px; }
+.direito-topo h3 { font-size: 1rem; margin: 0; }
+.direito-topo small { display: block; font-size: 0.6875rem; font-family: var(--font-mono); color: var(--text-subtle); margin-top: 2px; }
+.direito-resumo { font-size: 0.875rem; line-height: 1.55; color: var(--text-secondary); margin: 0 0 14px; }
+.direito-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.direito-bloco {
+  border: 1px solid var(--border-subtle);
+  border-top: 3px solid var(--bloco-cor);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--surface-inset);
+}
+.direito-bloco h5 { margin: 0 0 6px; font-size: 0.75rem; text-transform: uppercase; color: var(--bloco-cor); }
+.direito-bloco ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+.direito-bloco li { font-size: 0.8125rem; line-height: 1.45; }
+.direito-bloco.pode { --bloco-cor: var(--accent); }
+.direito-bloco.exige { --bloco-cor: var(--warn); }
+.direito-bloco.nao-pode { --bloco-cor: var(--down); }
+.direito-consequencia { border-left-color: var(--down); }
+.direito-consequencia strong { color: var(--down); }
 
 /* ───────── REFERÊNCIAS (RODAPÉ DA ABA DE GREVES) ───────── */
 .referencias-grupo + .referencias-grupo { margin-top: 16px; }

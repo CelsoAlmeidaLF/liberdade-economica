@@ -11,8 +11,8 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233DD68C' stroke-width='2'><path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/></svg>">
 
   <!-- Design System Canônico & Estilos Locais -->
-  <link rel="stylesheet" href="css/style.css?v=20261030f">
-  <link rel="stylesheet" href="css/liberdade.css?v=20261030f">
+  <link rel="stylesheet" href="css/style.css?v=20261030g">
+  <link rel="stylesheet" href="css/liberdade.css?v=20261030g">
   
   <!-- Biblioteca Vendored Local-First para Gráficos -->
   <script src="vendor/chart.js/chart.umd.js"></script>
@@ -24,6 +24,9 @@
       <div class="content-wrapper header-content">
         <!-- Marca & Título do Módulo -->
         <div class="brand-section">
+          <a href="https://celsoalmeidalf.github.io/calculadora-2026/" class="voltar-topo" title="Voltar ao Observatório Fiscal" aria-label="Voltar ao Observatório Fiscal">
+            <span data-icon="arrowLeft"></span>
+          </a>
           <div class="brand-icon-box" data-icon="users" aria-hidden="true"></div>
           <div class="brand-titles">
             <h1>
@@ -43,6 +46,20 @@
             <span data-icon="arrowLeft"></span>
             <span class="btn-text">Observatório Fiscal</span><span class="btn-text-short">Voltar</span>
           </a>
+          <div class="nav-abas" role="tablist" aria-label="Seções do app">
+            <button type="button" class="btn btn-secondary aba" role="tab" id="abaBtnSimulador" aria-controls="abaSimulador" aria-selected="true" data-aba="simulador">
+              <span data-icon="sliders"></span>
+              <span class="btn-text">Simulador</span><span class="btn-text-short">Simular</span>
+            </button>
+            <button type="button" class="btn btn-secondary aba" role="tab" id="abaBtnGreves" aria-controls="abaGreves" aria-selected="false" data-aba="greves" tabindex="-1">
+              <span data-icon="truck"></span>
+              <span class="btn-text">Greves reais</span><span class="btn-text-short">Greves</span>
+            </button>
+            <button type="button" class="btn btn-secondary aba" role="tab" id="abaBtnDireitos" aria-controls="abaDireitos" aria-selected="false" data-aba="direitos" tabindex="-1">
+              <span data-icon="scale"></span>
+              <span class="btn-text">Direitos e limites</span><span class="btn-text-short">Direitos</span>
+            </button>
+          </div>
           <button class="btn btn-primary" id="btnSyncIbge" title="Consultar webservice oficial de projeções do IBGE">
             <span id="iconSync" data-icon="refresh"></span>
             <span class="btn-text">Sincronizar IBGE</span><span class="btn-text-short">IBGE</span>
@@ -78,18 +95,6 @@
             </div>
           </div>
         </section>
-
-        <!-- ABAS -->
-        <div class="abas" role="tablist" aria-label="Seções do app">
-          <button type="button" class="aba" role="tab" id="abaBtnSimulador" aria-controls="abaSimulador" aria-selected="true" data-aba="simulador">
-            <span data-icon="sliders"></span>
-            Simulador
-          </button>
-          <button type="button" class="aba" role="tab" id="abaBtnGreves" aria-controls="abaGreves" aria-selected="false" data-aba="greves" tabindex="-1">
-            <span data-icon="truck"></span>
-            Greves reais
-          </button>
-        </div>
 
         <!-- ABA: SIMULADOR -->
         <div class="aba-painel" role="tabpanel" id="abaSimulador" aria-labelledby="abaBtnSimulador">
@@ -585,6 +590,24 @@
           </div>
           <div id="listaReferencias"></div>
         </section>
+        </div>
+
+        <!-- ABA: DIREITOS E LIMITES -->
+        <div class="aba-painel" role="tabpanel" id="abaDireitos" aria-labelledby="abaBtnDireitos" hidden>
+          <section class="glass-panel">
+            <div class="panel-header">
+              <div>
+                <h3 style="font-size: 0.95rem; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
+                  <span data-icon="scale"></span>
+                  Direitos e Limites
+                </h3>
+                <p>O que a lei permite e proíbe em greves, boicotes e manifestações, para pressionar sem correr risco na Justiça.</p>
+              </div>
+            </div>
+            <div class="direitos-indice" id="direitosIndice"></div>
+            <p class="setor-nota" id="lblAvisoDireitos"></p>
+          </section>
+          <div class="direitos-lista" id="direitosLista"></div>
         </div>
       </div>
     </main>
