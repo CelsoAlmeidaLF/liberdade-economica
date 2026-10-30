@@ -47,7 +47,7 @@ export class CivicView {
   }
 
   /**
-   * Aba Direitos e limites: um cartão por tema, com pode / exige / não pode / consequência e fontes
+   * Aba Direitos e limites: um cartão por tema, com pode / exige / não pode / visão liberal / consequência e fontes
    */
   _renderDireitos() {
     this._texto('lblAvisoDireitos', AVISO_DIREITOS);
@@ -107,6 +107,8 @@ export class CivicView {
       grade.className = 'direito-grade';
       [bloco('pode', 'Pode', d.pode), bloco('exige', 'A lei exige', d.exige), bloco('nao-pode', 'Não pode', d.naoPode)]
         .filter(Boolean).forEach(b => grade.appendChild(b));
+      const visao = bloco('visao-liberal', 'Visão liberal e de direita', d.visaoLiberal || []);
+      if (visao) grade.appendChild(visao);
 
       const consequencia = document.createElement('p');
       consequencia.className = 'caso-resultado direito-consequencia';

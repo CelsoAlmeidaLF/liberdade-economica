@@ -232,8 +232,10 @@ const todasFontes = new Set([...GREVES.flatMap(g => g.fontes), ...IPCA_2018.font
 assert(urlsRefs.length === todasFontes.size && urlsRefs.every(u => todasFontes.has(u)), 'Referências trazem todas as fontes usadas');
 
 // Direitos e limites
-assert(DIREITOS.map(d => d.id).join() === 'greve,publico,boicote,estradas,demissao', 'Guia cobre greve, setor público, boicote, estradas e demissão política');
+assert(DIREITOS.map(d => d.id).join() === 'greve,publico,boicote,estradas', 'Guia cobre greve, setor público, boicote e estradas');
 assert(DIREITOS.every(d => d.pode.length && d.naoPode.length && d.consequencia && d.fontes.length && d.fontes.every(f => f.url.startsWith('https://'))), 'Cada tema tem pode, não pode, consequência e fontes https');
+assert(DIREITOS.every(d => d.visaoLiberal?.length >= 3), 'Cada tema tem a visão liberal e de direita');
+assert(DIREITOS.find(d => d.id === 'greve').visaoLiberal.some(v => v.includes('art. 7º, parágrafo único')), 'Greve: substitutos permitidos na greve abusiva (art. 7º, parágrafo único)');
 assert(DIREITOS.find(d => d.id === 'estradas').consequencia.includes('20 vezes') && DIREITOS.find(d => d.id === 'estradas').consequencia.includes('60 vezes'), 'Bloqueio: multa de 20 vezes e 60 vezes para organizadores (CTB 253-A)');
 assert(DIREITOS.find(d => d.id === 'greve').exige.some(e => e.includes('48 horas')) && DIREITOS.find(d => d.id === 'greve').exige.some(e => e.includes('72 horas')), 'Lei de Greve: aviso de 48 h e 72 h em serviços essenciais');
 

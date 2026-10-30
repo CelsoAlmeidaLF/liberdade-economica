@@ -517,6 +517,7 @@
 .direito-bloco.pode { --bloco-cor: var(--accent); }
 .direito-bloco.exige { --bloco-cor: var(--warn); }
 .direito-bloco.nao-pode { --bloco-cor: var(--down); }
+.direito-bloco.visao-liberal { --bloco-cor: var(--info); grid-column: 1 / -1; }
 .direito-consequencia { border-left-color: var(--down); }
 .direito-consequencia strong { color: var(--down); }
 
@@ -552,3 +553,7 @@
   .referencias-grupo ol { padding-left: 22px; }
   .referencias-grupo small { display: block; margin-left: 0; }
 }
+
+/* ───────── LOGO OFICIAL (icons/) ───────── */
+.brand-icon-box.brand-logo { background: none; border: none; padding: 0; overflow: hidden; }
+.brand-logo img { width: 100%; height: 100%; display: block; }

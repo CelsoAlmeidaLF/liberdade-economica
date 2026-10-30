@@ -2,12 +2,14 @@
 
 **App publicado:** https://celsoalmeidalf.github.io/liberdade-economica-2026/
 
+**Ícone oficial:** `icons/` (favicon, logo do cabeçalho, tela inicial do celular via `manifest.webmanifest` e prévia de compartilhamento `og-image.jpg`). A imagem original fica em `icons/` e os tamanhos são gerados dela.
+
 **Impacto econômico das greves no Brasil.** Simula greves de consumo, de transporte, gerais, de uma categoria e do setor público; mostra o efeito cascata sobre outros setores, quem paga a conta, o efeito nos preços e compara com greves reais documentadas.
 
 ## Abas
 - **Simulador:** tipos de greve, resultados, peso na arrecadação e quem paga a conta.
 - **Greves reais** (`#greves`): efeito nos preços, biblioteca de greves, comparação, linha do tempo e referências.
-- **Direitos e limites** (`#direitos`, `DireitosGreve.js`): Lei de Greve, greve no setor público, boicote, bloqueio de estradas (CTB art. 253-A) e demissão por opinião política, cada tema com pode / exige / não pode / consequência e fontes.
+- **Direitos e limites** (`#direitos`, `DireitosGreve.js`): Lei de Greve, greve no setor público, boicote e bloqueio de estradas (CTB art. 253-A), cada tema com pode / exige / não pode / visão liberal e de direita / consequência e fontes.
 
 No computador as abas ficam no topo; no celular, na barra de baixo junto com IBGE, CSV e Enviar.
 
