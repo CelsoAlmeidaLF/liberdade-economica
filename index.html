@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1C1C1C">
+  <meta name="description" content="Liberdade Econômica: impacto econômico das greves no Brasil. Simulação de greves de consumo, transporte, gerais, de categoria e do setor público, efeito cascata, quem paga a conta e greves reais com fontes.">
+  <title>Liberdade Econômica • Impacto econômico das greves</title>
+
+  <!-- Favicon SVG Inline -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233DD68C' stroke-width='2'><path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/></svg>">
+
+  <!-- Design System Canônico & Estilos Locais -->
+  <link rel="stylesheet" href="css/style.css?v=20261030f">
+  <link rel="stylesheet" href="css/liberdade.css?v=20261030f">
+  
+  <!-- Biblioteca Vendored Local-First para Gráficos -->
+  <script src="vendor/chart.js/chart.umd.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- BARRA SUPERIOR / HEADER GLOBAL -->
+    <header class="main-header">
+      <div class="content-wrapper header-content">
+        <!-- Marca & Título do Módulo -->
+        <div class="brand-section">
+          <div class="brand-icon-box" data-icon="users" aria-hidden="true"></div>
+          <div class="brand-titles">
+            <h1>
+              Liberdade Econômica
+              <span class="badge-status idle" id="ibgeStatusBadge">
+                <span class="badge-pulse"></span>
+                IBGE Pronto
+              </span>
+            </h1>
+            <p>Impacto econômico das greves no Brasil</p>
+          </div>
+        </div>
+
+        <!-- Ações Globais do Header -->
+        <div class="header-actions" role="navigation" aria-label="Ações do app">
+          <a href="https://celsoalmeidalf.github.io/calculadora-2026/" class="btn btn-secondary" title="Retornar ao Observatório Macroeconômico">
+            <span data-icon="arrowLeft"></span>
+            <span class="btn-text">Observatório Fiscal</span><span class="btn-text-short">Voltar</span>
+          </a>
+          <button class="btn btn-primary" id="btnSyncIbge" title="Consultar webservice oficial de projeções do IBGE">
+            <span id="iconSync" data-icon="refresh"></span>
+            <span class="btn-text">Sincronizar IBGE</span><span class="btn-text-short">IBGE</span>
+          </button>
+          <button class="btn btn-secondary" data-action="export-csv" title="Exportar dados completos em formato CSV">
+            <span data-icon="fileSpreadsheet"></span>
+            <span class="btn-text">Exportar CSV</span><span class="btn-text-short">CSV</span>
+          </button>
+          <button class="btn btn-whatsapp" data-action="share-whatsapp" title="Compartilhar nota técnica via WhatsApp">
+            <span data-icon="whatsapp"></span>
+            <span class="btn-text">WhatsApp</span><span class="btn-text-short">Enviar</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+      <div class="content-wrapper" style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+        <!-- BANNER DE APRESENTAÇÃO CÍVICA -->
+        <section class="glass-panel" style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <span class="badge-status active">Impacto econômico das greves no Brasil</span>
+              <h2 style="margin-top: 0.35rem;">Quanto Custa uma Greve para o País?</h2>
+              <p style="max-width: 900px; line-height: 1.6;">
+                Simule greves de consumo, de transporte, gerais, de uma categoria ou do setor público. Veja quanto a economia perde, o efeito cascata sobre outros setores, quem paga a conta e compare com greves reais.
+              </p>
+            </div>
+            <div class="panel-header-badge">
+              População Base (IBGE): <strong class="text-white" id="lblPopBase">214.211.951</strong> • Checagem: <span id="lblLastSyncTime" class="text-white">Referência 2026</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ABAS -->
+        <div class="abas" role="tablist" aria-label="Seções do app">
+          <button type="button" class="aba" role="tab" id="abaBtnSimulador" aria-controls="abaSimulador" aria-selected="true" data-aba="simulador">
+            <span data-icon="sliders"></span>
+            Simulador
+          </button>
+          <button type="button" class="aba" role="tab" id="abaBtnGreves" aria-controls="abaGreves" aria-selected="false" data-aba="greves" tabindex="-1">
+            <span data-icon="truck"></span>
+            Greves reais
+          </button>
+        </div>
+
+        <!-- ABA: SIMULADOR -->
+        <div class="aba-painel" role="tabpanel" id="abaSimulador" aria-labelledby="abaBtnSimulador">
+        <!-- LAYOUT DE SIMULAÇÃO (CONTROLES + RESULTADOS) -->
+        <div class="two-column-layout">
+          <!-- Coluna Esquerda: Parâmetros da Greve -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <div>
+                <h3 style="font-size: 0.95rem; text-transform: uppercase; color: var(--warn); display: flex; align-items: center; gap: 0.5rem;">
+                  <span data-icon="sliders"></span>
+                  Parâmetros da Greve
+                </h3>
+                <p>Escolha o tipo de greve e ajuste os parâmetros para simular o impacto.</p>
+              </div>
+            </div>
+
+            <!-- Tipo de greve -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Tipo de greve:</span>
+                <span class="control-val text-warn" id="cValTipo">Greve de consumo</span>
+              </div>
+              <div class="setor-chips tipo-chips" id="tipoChips" role="group" aria-label="Tipo de greve"></div>
+              <p class="setor-nota" id="lblTipoDesc"></p>
+            </div>
+
+            <!-- Duração (comum a todos os tipos) -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Duração:</span>
+                <span class="control-val text-purple" id="cValDays">14 dias</span>
+              </div>
+              <input type="range" id="cInputDays" min="1" max="120" step="1" value="14" aria-label="Duração">
+              <div class="control-scale">
+                <span>1 dia</span>
+                <span>60 dias</span>
+                <span>120 dias</span>
+              </div>
+            </div>
+
+            <!-- GRUPO: GREVE DE CONSUMO -->
+            <div class="grupo-tipo" id="grupoConsumo">
+            <!-- Setor atingido pelo boicote -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">O que o boicote atinge:</span>
+                <span class="control-val text-accent" id="cValSetor">Consumo em geral</span>
+              </div>
+              <div class="setor-chips" id="setorChips" role="group" aria-label="Setor atingido pelo boicote"></div>
+              <p class="setor-nota" id="lblSetorNota"></p>
+            </div>
+
+            <!-- Slider Participantes -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Cidadãos em Adesão Ativa:</span>
+                <span class="control-val text-info" id="cValParticipants">2.500.000</span>
+              </div>
+              <input type="range" id="cInputParticipants" min="10000" max="15000000" step="10000" value="2500000" aria-label="Cidadãos em Adesão Ativa">
+              <div class="control-scale">
+                <span>10 mil</span>
+                <span>7,4M (3,5% Chenoweth)</span>
+                <span>15M</span>
+              </div>
+            </div>
+
+            <!-- Slider Retenção Diária -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Retenção de Gasto / Dia:</span>
+                <span class="control-val text-accent" id="cValSpend">R$ 50,00</span>
+              </div>
+              <input type="range" id="cInputSpend" min="10" max="300" step="5" value="50" aria-label="Retenção de Gasto por Dia">
+              <div class="control-scale">
+                <span>R$ 10</span>
+                <span>R$ 150</span>
+                <span>R$ 300</span>
+              </div>
+            </div>
+
+            <!-- Slider Carga Tributária -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label" title="Tributos sobre bens e serviços (13,91% do PIB, Tesouro 2024) divididos pelo consumo das famílias (~63,8% do PIB)">Tributos no Preço (est.):</span>
+                <span class="control-val text-warn" id="cValTax">21,80%</span>
+              </div>
+              <input type="range" id="cInputTax" min="10.0" max="60.0" step="0.1" value="21.8" aria-label="Tributos embutidos no valor gasto">
+              <div class="control-scale">
+                <span>10%</span>
+                <span>35%</span>
+                <span>60%</span>
+              </div>
+            </div>
+
+            <!-- Slider Gasto Adiado -->
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label" title="Parte do que deixou de ser comprado que volta a ser comprada depois do boicote. O imposto dessa parte só atrasa.">Parte do Gasto Só Adiada:</span>
+                <span class="control-val text-info" id="cValAdiado">40%</span>
+              </div>
+              <input type="range" id="cInputAdiado" min="0" max="95" step="5" value="40" aria-label="Parte do gasto que é só adiada">
+              <div class="control-scale">
+                <span>0% (perdido de vez)</span>
+                <span>50%</span>
+                <span>95%</span>
+              </div>
+            </div>
+
+            <!-- Presets Rápidos -->
+            <div class="preset-buttons">
+              <button class="btn-preset" data-civic-preset="true" data-preset-p="500000" data-preset-s="30" data-preset-d="7">
+                Boicote Local (7d)
+              </button>
+              <button class="btn-preset" data-civic-preset="true" data-preset-p="2500000" data-preset-s="50" data-preset-d="14">
+                Greve de Consumo (14d)
+              </button>
+              <button class="btn-preset highlight" data-civic-preset="true" data-preset-p="7440000" data-preset-s="75" data-preset-d="30">
+                Meta 3,5% Chenoweth (30d)
+              </button>
+              <button class="btn-preset" data-civic-preset="true" data-preset-p="10000000" data-preset-s="100" data-preset-d="60">
+                Paralisação Ampla (60d)
+              </button>
+            </div>
+            </div>
+
+            <!-- GRUPO: GREVES QUE PARAM A PRODUÇÃO (transporte, geral, categoria) -->
+            <div class="grupo-tipo" id="grupoProducao" hidden>
+              <div class="control-group" id="grupoSetorProducao">
+                <div class="control-header">
+                  <span class="control-label">Quem para:</span>
+                  <span class="control-val text-accent" id="cValSetorProducao">Caminhoneiros (carga)</span>
+                </div>
+                <div class="setor-chips" id="setorProducaoChips" role="group" aria-label="Setor parado"></div>
+              </div>
+              <p class="setor-nota" id="lblSetorProducaoNota" style="margin: -8px 0 16px;"></p>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Adesão (trabalhadores que pararam):</span>
+                <span class="control-val text-info" id="cValAdesao">80%</span>
+              </div>
+              <input type="range" id="cInputAdesao" min="1" max="100" step="1" value="80" aria-label="Adesão (trabalhadores que pararam)">
+              <div class="control-scale">
+                <span>1%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label" title="Parte da produção que é feita depois: hora extra, estoque, entregas atrasadas.">Produção Recuperada Depois:</span>
+                <span class="control-val text-accent" id="cValRecuperacao">0%</span>
+              </div>
+              <input type="range" id="cInputRecuperacao" min="0" max="90" step="5" value="0" aria-label="Produção Recuperada Depois">
+              <div class="control-scale">
+                <span>0% (perdida de vez)</span>
+                <span>45%</span>
+                <span>90%</span>
+              </div>
+            </div>
+
+              <label class="toggle-cascata">
+                <input type="checkbox" id="cInputCascata" checked>
+                <span class="toggle-trilho" aria-hidden="true"></span>
+                <span>
+                  <strong>Efeito cascata</strong>
+                  <small id="lblCascata">Outros setores param junto (× 4,15)</small>
+                </span>
+              </label>
+            </div>
+
+            <!-- GRUPO: SETOR PÚBLICO -->
+            <div class="grupo-tipo" id="grupoPublico" hidden>
+              <div class="control-group">
+                <div class="control-header">
+                  <span class="control-label">Órgão:</span>
+                  <span class="control-val text-accent" id="cValOrgao">Universidades e institutos</span>
+                </div>
+                <div class="setor-chips" id="orgaoChips" role="group" aria-label="Órgão parado"></div>
+                <p class="setor-nota" id="lblOrgaoNota"></p>
+              </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Servidores do Órgão:</span>
+                <span class="control-val text-info" id="cValServidores">100.000</span>
+              </div>
+              <input type="range" id="cInputServidores" min="1000" max="500000" step="1000" value="100000" aria-label="Servidores do Órgão">
+              <div class="control-scale">
+                <span>1 mil</span>
+                <span>250 mil</span>
+                <span>500 mil</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Adesão (servidores que pararam):</span>
+                <span class="control-val text-info" id="cValAdesaoPub">60%</span>
+              </div>
+              <input type="range" id="cInputAdesaoPub" min="1" max="100" step="1" value="60" aria-label="Adesão (servidores que pararam)">
+              <div class="control-scale">
+                <span>1%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Remuneração Média / Mês:</span>
+                <span class="control-val text-warn" id="cValRemuneracao">R$ 9.000</span>
+              </div>
+              <input type="range" id="cInputRemuneracao" min="1500" max="30000" step="500" value="9000" aria-label="Remuneração Média / Mês">
+              <div class="control-scale">
+                <span>R$ 1,5 mil</span>
+                <span>R$ 15 mil</span>
+                <span>R$ 30 mil</span>
+              </div>
+            </div>
+            <div class="control-group">
+              <div class="control-header">
+                <span class="control-label">Atendimentos por Servidor / Dia:</span>
+                <span class="control-val text-accent" id="cValAtendimentos">20</span>
+              </div>
+              <input type="range" id="cInputAtendimentos" min="1" max="40" step="1" value="20" aria-label="Atendimentos por Servidor / Dia">
+              <div class="control-scale">
+                <span>1</span>
+                <span>20</span>
+                <span>40</span>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- Coluna Direita: Métricas e Monitor Chenoweth -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Grid de 4 Cards de Impacto (rótulos definidos pelo tipo de greve) -->
+            <div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.875rem;">
+              <div class="glass-panel" style="padding: 1rem;">
+                <span class="kpi-label text-down" id="kpi1Label"></span>
+                <div class="kpi-value" id="kpi1Valor">R$ 0</div>
+                <span class="kpi-sub" id="kpi1Sub"></span>
+              </div>
+              <div class="glass-panel" style="padding: 1rem;">
+                <span class="kpi-label text-warn" id="kpi2Label"></span>
+                <div class="kpi-value" id="kpi2Valor">R$ 0</div>
+                <span class="kpi-sub" id="kpi2Sub"></span>
+              </div>
+              <div class="glass-panel" style="padding: 1rem;">
+                <span class="kpi-label text-info" id="kpi3Label"></span>
+                <div class="kpi-value" id="kpi3Valor">R$ 0</div>
+                <span class="kpi-sub" id="kpi3Sub"></span>
+              </div>
+              <div class="glass-panel" style="padding: 1rem;">
+                <span class="kpi-label text-accent" id="kpi4Label"></span>
+                <div class="kpi-value" id="kpi4Valor">R$ 0</div>
+                <span class="kpi-sub" id="kpi4Sub"></span>
+              </div>
+            </div>
+
+            <!-- Peso na Arrecadação Real (fases do simulador) -->
+            <div class="glass-panel" id="painelArrecadacao">
+              <div class="control-header" style="margin-bottom: 0.35rem;">
+                <span class="control-label" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span data-icon="scale" style="color: var(--warn);"></span>
+                  Peso na Arrecadação de União, Estados e Municípios
+                </span>
+                <span class="control-val text-warn" id="cResArrecPct">0,00% da arrecadação</span>
+              </div>
+              <div class="progress-bar-container" title="Cada quarto da barra é uma fase: até 0,25%, até 1%, até 3% e acima de 3% da arrecadação do período">
+                <div class="progress-bar-fill" id="cBarArrec" style="width: 0%;"></div>
+              </div>
+              <div class="fase-escala" aria-hidden="true">
+                <span>0%</span><span>0,25%</span><span>1%</span><span>3%</span><span>6%+</span>
+              </div>
+              <strong id="cResFaseTitulo" class="text-white" style="display: block; font-size: 0.8125rem; margin-top: 0.5rem;">Fase 1: Sinal simbólico</strong>
+              <p id="cResFaseDesc" style="font-size: 0.725rem; color: var(--text-subtle); margin-top: 0.25rem; font-family: var(--font-mono);"></p>
+              <p class="setor-nota" id="lblArrecRef" style="margin-top: 0.35rem;"></p>
+            </div>
+
+            <!-- Monitor do Limiar dos 3,5% (Erica Chenoweth - Harvard) -->
+            <div class="glass-panel" id="painelChenoweth">
+              <div class="control-header" style="margin-bottom: 0.35rem;">
+                <span class="control-label" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span data-icon="target" style="color: var(--info);"></span>
+                  Adesão: Referência dos 3,5% de Erica Chenoweth (Harvard Kennedy School)
+                </span>
+                <span class="control-val text-warn" id="cResChenowethPct">1,18% da População</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="cBarChenoweth" style="width: 33.6%;"></div>
+                <div class="progress-target-line" title="Referência dos 3,5% (~7,50 milhões)"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.6875rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 0.25rem;">
+                <strong id="cResChenowethStatus" class="text-white">Adesão crescente</strong>
+                <span>Referência: <strong id="lblChenowethGoal" class="text-warn">7.497.418 pessoas</strong></span>
+              </div>
+              <p id="cResChenowethDesc" style="font-size: 0.725rem; color: var(--text-subtle); margin-top: 0.35rem; font-family: var(--font-mono);">
+                Entre um quinto e metade da referência de 3,5% da população.
+              </p>
+            </div>
+
+            <!-- Gráfico de Linha: Evolução Temporal -->
+            <div class="glass-panel" id="painelPublico" hidden>
+              <div class="control-header" style="margin-bottom: 0.35rem;">
+                <span class="control-label" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span data-icon="users" style="color: var(--info);"></span>
+                  Fila Acumulada
+                </span>
+                <span class="control-val text-info" id="cResFila">0</span>
+              </div>
+              <p id="cResFilaDesc" style="font-size: 0.725rem; color: var(--text-subtle); font-family: var(--font-mono);"></p>
+            </div>
+
+            <div class="glass-panel">
+              <div class="panel-header" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
+                <h4 style="font-size: 0.875rem; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
+                  <span data-icon="chartLine" style="color: var(--accent);"></span>
+                  <span id="lblChartTitulo">Impacto Acumulado ao Longo dos Dias</span>
+                </h4>
+              </div>
+              <div class="chart-container" style="height: 180px;">
+                <canvas id="chartEvolution"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEÇÃO: DECOMPOSIÇÃO FEDERATIVA DA DRENAGEM (só greve de consumo) -->
+        <section class="glass-panel" id="secDecomposicao">
+          <div class="panel-header">
+            <div>
+              <h3 style="font-size: 0.95rem; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
+                <span data-icon="pieChart"></span>
+                Decomposição Federativa e Tributária da Drenagem
+              </h3>
+              <p>Partilha estimada do imposto que deixou de entrar no período, por ente federativo e tributo. A proporção muda conforme o setor atingido.</p>
+            </div>
+          </div>
+
+          <div class="two-column-layout" style="align-items: center;">
+            <!-- Gráfico de Rosca -->
+            <div class="chart-doughnut-container">
+              <canvas id="chartBreakdown"></canvas>
+            </div>
+
+            <!-- Tabela Federativa -->
+            <div class="table-responsive">
+              <table class="sensibility-table">
+                <thead>
+                  <tr>
+                    <th>Ente Federativo</th>
+                    <th>Tributo Principal</th>
+                    <th class="text-center">Proporção</th>
+                    <th class="text-right">Drenagem Estimada</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="Ente Federativo"><strong>Governos Estaduais</strong></td>
+                    <td data-label="Tributo Principal" class="text-accent">ICMS (Consumo & Circulação)</td>
+                    <td data-label="Proporção" class="text-center" id="pctIcms">58%</td>
+                    <td data-label="Drenagem Estimada" class="text-right text-accent font-bold" id="valIcms">R$ 347,1 Mi</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Ente Federativo"><strong>Governo Federal (União)</strong></td>
+                    <td data-label="Tributo Principal" class="text-info">PIS / COFINS (Seguridade)</td>
+                    <td data-label="Proporção" class="text-center" id="pctPisCofins">28%</td>
+                    <td data-label="Drenagem Estimada" class="text-right text-info font-bold" id="valPisCofins">R$ 167,6 Mi</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Ente Federativo"><strong>Governo Federal (União)</strong></td>
+                    <td data-label="Tributo Principal" class="text-warn">IPI (Produtos Industrializados)</td>
+                    <td data-label="Proporção" class="text-center" id="pctIpi">8%</td>
+                    <td data-label="Drenagem Estimada" class="text-right text-warn font-bold" id="valIpi">R$ 47,9 Mi</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Ente Federativo"><strong>Governos Municipais</strong></td>
+                    <td data-label="Tributo Principal" style="color: var(--accent-purple);">ISS (Serviços Locais)</td>
+                    <td data-label="Proporção" class="text-center" id="pctIss">6%</td>
+                    <td data-label="Drenagem Estimada" class="text-right font-bold" style="color: var(--accent-purple);" id="valIss">R$ 35,9 Mi</td>
+                  </tr>
+                  <tr class="baseline-row">
+                    <td data-label="Total" colspan="3"><strong>Total Geral Drenado</strong></td>
+                    <td data-label="Drenagem Estimada" class="text-right text-down font-bold" id="valTotalDrenado">R$ 598,5 Mi</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- SEÇÃO: QUEM PAGA A CONTA -->
+        <section class="glass-panel" id="secDivisao">
+          <div class="panel-header">
+            <div>
+              <h3 style="font-size: 0.95rem; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 0.5rem;">
+                <span data-icon="scale"></span>
+                Quem Paga a Conta
+              </h3>
+              <p>Como o custo da greve simulada se divide entre empresas, trabalhadores, governo e consumidores.</p>
+            </div>
+          </div>
+          <div class="divisao-barra" id="divisaoBarra" role="img" aria-label="Divisão do custo"></div>
+          <div class="divisao-lista" id="divisaoLista"></div>
+          <p class="setor-nota" id="lblDivisaoNota"></p>
+        </section>
+
+        </div>
+
+        <!-- ABA: GREVES REAIS -->
+        <div class="aba-painel" role="tabpanel" id="abaGreves" aria-labelledby="abaBtnGreves" hidden>
+        <!-- SEÇÃO: EFEITO NOS PREÇOS -->
+        <section class="glass-panel" id="secPrecos">
+          <div class="panel-header">
+            <div>
+              <h3 style="font-size: 0.95rem; text-transform: uppercase; color: var(--down); display: flex; align-items: center; gap: 0.5rem;">
+                <span data-icon="chartLine"></span>
+                Efeito nos Preços: Inflação de 2018
+              </h3>
+              <p id="lblPrecosResumo"></p>
+            </div>
+          </div>
+          <div class="chart-container" style="height: 220px;">
+            <canvas id="chartPrecos"></canvas>
+          </div>
+          <p class="caso-resultado" id="lblPrecosLeitura" style="margin-top: 12px;"></p>
+          <ul class="caso-fontes" id="listaPrecosFontes" aria-label="Fontes"></ul>
+        </section>
+
+        <!-- SEÇÃO: CASOS REAIS -->
+        <section class="glass-panel caso-real" id="secCasos">
+          <div class="panel-header">
+            <div>
+              <h3 style="font-size: 0.95rem; text-transform: uppercase; color: var(--warn); display: flex; align-items: center; gap: 0.5rem;">
+                <span data-icon="truck"></span>
+                Greves Reais no Brasil
+              </h3>
+              <p>Escolha uma greve para ver os números, o resultado e as fontes. Quando não há estimativa consolidada de custo, o app diz isso.</p>
+            </div>
+          </div>
+
+          <div class="setor-chips casos-chips" id="casosChips" role="group" aria-label="Greves reais"></div>
+
+          <div class="caso-detalhe" id="casoDetalhe">
+            <div class="caso-detalhe-topo">
+              <strong id="casoTitulo"></strong>
+              <span class="panel-header-badge" id="casoPeriodo"></span>
+            </div>
+            <p id="casoResumo" class="caso-resumo"></p>
+            <div class="kpi-grid" id="casoKpis" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.875rem;"></div>
+            <p class="caso-resultado" id="casoResultado"></p>
+            <p class="setor-nota" id="casoComparacao"></p>
+            <ul class="caso-fontes" id="casoFontes" aria-label="Fontes"></ul>
+          </div>
+
+          <div class="casos-ordem">
+            <span class="control-label">Ordenar por:</span>
+            <button type="button" class="btn-preset" data-ordem="data" aria-pressed="true">Data</button>
+            <button type="button" class="btn-preset" data-ordem="duracao" aria-pressed="false">Duração</button>
+          </div>
+
+          <h4 class="casos-subtitulo">Comparação lado a lado</h4>
+          <div class="table-responsive">
+            <table class="sensibility-table tabela-greves">
+              <thead>
+                <tr>
+                  <th>Greve</th>
+                  <th class="text-center">Dias</th>
+                  <th class="text-right">Custo</th>
+                  <th class="text-right">Custo / dia</th>
+                  <th>Origem do número</th>
+                  <th>Conquistou?</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaGreves"></tbody>
+            </table>
+          </div>
+
+          <h4 class="casos-subtitulo">Linha do tempo</h4>
+          <ol class="linha-tempo" id="linhaTempo"></ol>
+        </section>
+
+        <!-- RODAPÉ DA ABA: REFERÊNCIAS -->
+        <section class="glass-panel referencias" id="secReferencias">
+          <div class="panel-header">
+            <div>
+              <h3 style="font-size: 0.95rem; text-transform: uppercase; color: var(--info); display: flex; align-items: center; gap: 0.5rem;">
+                <span data-icon="externalLink"></span>
+                Referências
+              </h3>
+              <p>Fontes usadas nesta aba e nos cálculos do simulador. Números sem fonte oficial estão marcados como estimativa, imprensa ou fonte sindical.</p>
+            </div>
+          </div>
+          <div id="listaReferencias"></div>
+        </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- RODAPÉ GOVERNAMENTAL -->
+    <footer class="gov-footer">
+      <div class="content-wrapper footer-content">
+        <div>
+          <strong>Liberdade Econômica</strong> • Impacto econômico das greves no Brasil
+        </div>
+        <div>
+          ALMEIDA - 2026
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div class="toast-container" id="toastNotification" role="alert" aria-live="assertive">
+    <div class="toast-icon" data-icon="checkCircle"></div>
+    <div id="toastMessage">Operação realizada com sucesso.</div>
+  </div>
+
+  <!-- ENTRYPOINT DA APLICAÇÃO (ES6 MODULE) -->
+  <script type="module" src="src/Program.js"></script>
+</body>
+</html>
