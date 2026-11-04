@@ -6,6 +6,7 @@
   "scripts": {
     "test": "node tests/test_civic_models.js",
     "test:ui": "node --experimental-websocket tests/test_ui_smoke.mjs",
-    "versionar": "node scripts/versionar.mjs"
+    "versionar": "node scripts/versionar.mjs",
+    "design-system": "node ../_design-system/sync.mjs --verificar"
   }
 }

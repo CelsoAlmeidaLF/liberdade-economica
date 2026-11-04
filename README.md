@@ -114,7 +114,7 @@ Na pesquisa de Chenoweth e Stephan, campanhas de massa contra governos que mobil
 ├── css/
 │   ├── fonts.css                # Fontes locais
 │   ├── liberdade.css            # Estilos próprios do app (setores, fases, cartões)
-│   └── style.css                # Tokens e estilos base (Fluent-Spectrum, cores do Brasil)
+│   └── style.css                # Estilos do conteúdo
 ├── src/
 │   ├── Program.js               # Composition Root & Injeção de Dependências
 │   ├── domain/                  # Lógica pura de negócio e modelos matemáticos
@@ -131,15 +131,14 @@ Na pesquisa de Chenoweth e Stephan, campanhas de massa contra governos que mobil
 │   │   └── CivicPressureService.js # Gestão de simulação e notas técnicas
 │   ├── infrastructure/          # Adapters externos
 │   │   ├── IbgeGateway.js       # Conector REST ao IBGE com fallback seguro
-│   │   ├── PwaRegistrar.js      # Registro do service worker
 │   │   ├── CsvExporter.js       # Exportador CSV RFC 4180 UTF-8 BOM
 │   │   └── ChartAdapter.js      # Gráficos Chart.js 4.4.1 (Evolução + Rosca setorial)
 │   └── ui/                      # Camada de apresentação e interface
 │       ├── SvgIcons.js          # Ícones vetorizados Lucide / FinancIcons
-│       ├── AtalhoConteudo.js    # "Pular para o conteúdo"
 │       ├── CenarioUrl.js        # Cenário do simulador no endereço da página
 │       └── CivicView.js         # Controle reativo do DOM e eventos
 ├── vendor/
+│   ├── stk-gov/                 # Design system comum (cópia)
 │   ├── chart.js/chart.umd.js    # Chart.js 4.4.1 vendored localmente
 │   └── fonts/                   # Arquivos .woff2
 ├── scripts/versionar.mjs        # Carimba a versão nos arquivos e no sw.js

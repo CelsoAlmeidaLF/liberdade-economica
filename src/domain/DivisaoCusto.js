@@ -2,7 +2,7 @@
  * Camada de Domínio: DivisaoCusto
  * Quem paga a conta de uma greve: empresas, trabalhadores, governo e consumidores.
  */
-import { OTICA_RENDA } from './ArrecadacaoReferencia.js?v=20261104-1656';
+import { OTICA_RENDA } from './ArrecadacaoReferencia.js?v=20261104-1710';
 
 export class DivisaoCusto {
   /**

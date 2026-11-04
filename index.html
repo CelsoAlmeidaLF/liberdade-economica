@@ -20,77 +20,83 @@
   <meta property="og:image" content="https://celsoalmeidalf.github.io/liberdade-economica-2026/icons/og-image.jpg">
   <meta property="og:type" content="website">
 
-  <!-- Design System Canônico & Estilos Locais -->
-  <link rel="stylesheet" href="css/style.css?v=20261104-1656">
-  <link rel="stylesheet" href="css/liberdade.css?v=20261104-1656">
+  <!-- Design system comum dos projetos 8.X (cópia de _design-system/, não editar aqui) + estilos do conteúdo -->
+  <link rel="stylesheet" href="css/fonts.css?v=20261104-1710">
+  <link rel="stylesheet" href="vendor/stk-gov/stk-gov.css?v=20261104-1710">
+  <link rel="stylesheet" href="css/style.css?v=20261104-1710">
+  <link rel="stylesheet" href="css/liberdade.css?v=20261104-1710">
   
   <!-- Biblioteca Vendored Local-First para Gráficos -->
   <script src="vendor/chart.js/chart.umd.js"></script>
 </head>
 <body>
-  <div class="app-container">
-    <!-- BARRA SUPERIOR / HEADER GLOBAL -->
-    <header class="main-header">
-      <div class="content-wrapper header-content">
-        <!-- Marca & Título do Módulo -->
-        <div class="brand-section">
-          <a href="https://celsoalmeidalf.github.io/calculadora-2026/" class="voltar-topo" title="Voltar ao Observatório Fiscal" aria-label="Voltar ao Observatório Fiscal">
-            <span data-icon="arrowLeft"></span>
-          </a>
-          <div class="brand-icon-box brand-logo" aria-hidden="true"><img src="icons/icon-64.png" alt="" width="36" height="36"></div>
-          <div class="brand-titles">
-            <h1>
-              Liberdade Econômica
-              <span class="badge-status idle" id="ibgeStatusBadge">
-                <span class="badge-pulse"></span>
-                IBGE Pronto
-              </span>
-            </h1>
-            <p>Impacto econômico das greves no Brasil</p>
+  <header class="app-topbar" id="appTopbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand-section">
+        <button type="button" class="btn-hamburger" id="btnToggleSidebar" aria-controls="appSidebar" aria-label="Recolher menu">
+          <span data-stk-icon="panelLeft"></span>
+        </button>
+        <div class="topbar-divider"></div>
+        <div class="topbar-brand">
+          <img class="app-logo" src="icons/icon-64.png" alt="" width="36" height="36">
+          <div class="min-w-0">
+            <div class="brand-title-row">
+              <h1 class="brand-heading">Liberdade Econômica</h1>
+              <span class="badge-status idle" id="ibgeStatusBadge"><span class="badge-pulse"></span> IBGE Pronto</span>
+            </div>
+            <p class="brand-subtext">Impacto econômico das greves no Brasil</p>
           </div>
-        </div>
-
-        <!-- Ações Globais do Header -->
-        <div class="header-actions" role="navigation" aria-label="Ações do app">
-          <a href="https://celsoalmeidalf.github.io/calculadora-2026/" class="btn btn-secondary" title="Retornar ao Observatório Macroeconômico">
-            <span data-icon="arrowLeft"></span>
-            <span class="btn-text">Observatório Fiscal</span><span class="btn-text-short">Voltar</span>
-          </a>
-          <div class="nav-abas" role="tablist" aria-label="Seções do app">
-            <button type="button" class="btn btn-secondary aba" role="tab" id="abaBtnSimulador" aria-controls="abaSimulador" aria-selected="true" data-aba="simulador">
-              <span data-icon="sliders"></span>
-              <span class="btn-text">Simulador</span><span class="btn-text-short">Simular</span>
-            </button>
-            <button type="button" class="btn btn-secondary aba" role="tab" id="abaBtnGreves" aria-controls="abaGreves" aria-selected="false" data-aba="greves" tabindex="-1">
-              <span data-icon="truck"></span>
-              <span class="btn-text">Greves reais</span><span class="btn-text-short">Greves</span>
-            </button>
-            <button type="button" class="btn btn-secondary aba" role="tab" id="abaBtnDireitos" aria-controls="abaDireitos" aria-selected="false" data-aba="direitos" tabindex="-1">
-              <span data-icon="scale"></span>
-              <span class="btn-text">Direitos e limites</span><span class="btn-text-short">Direitos</span>
-            </button>
-          </div>
-          <button class="btn btn-primary" id="btnSyncIbge" title="Consultar webservice oficial de projeções do IBGE">
-            <span id="iconSync" data-icon="refresh"></span>
-            <span class="btn-text">Sincronizar IBGE</span><span class="btn-text-short">IBGE</span>
-          </button>
-          <button class="btn btn-secondary" data-action="export-csv" title="Exportar dados completos em formato CSV">
-            <span data-icon="fileSpreadsheet"></span>
-            <span class="btn-text">Exportar CSV</span><span class="btn-text-short">CSV</span>
-          </button>
-          <button class="btn btn-secondary" id="btnShareCenario" type="button" title="Copiar link deste cenário">
-            <span data-icon="copy"></span>
-            <span class="btn-text">Compartilhar</span><span class="btn-text-short">Link</span>
-          </button>
-          <button class="btn btn-whatsapp" data-action="share-whatsapp" title="Compartilhar nota técnica via WhatsApp">
-            <span data-icon="whatsapp"></span>
-            <span class="btn-text">WhatsApp</span><span class="btn-text-short">Enviar</span>
-          </button>
         </div>
       </div>
-    </header>
+      <div class="topbar-controls-section">
+        <div class="topbar-actions-wrap">
+          <button type="button" class="action-btn action-btn-secondary" id="btnInstallApp" hidden>
+            <span data-stk-icon="download"></span><span class="action-btn-text">Instalar</span>
+          </button>
+          <button type="button" class="action-btn action-btn-secondary" id="btnSyncIbge" title="Consultar a população no IBGE" aria-label="Sincronizar IBGE">
+            <span id="iconSync" data-stk-icon="refresh"></span><span class="action-btn-text">IBGE</span>
+          </button>
+          <button type="button" class="action-btn action-btn-secondary" data-action="export-csv" title="Exportar dados em CSV" aria-label="Exportar CSV">
+            <span data-stk-icon="fileCsv"></span><span class="action-btn-text">CSV</span>
+          </button>
+          <div class="action-menu">
+            <button type="button" class="action-btn action-btn-primary" aria-haspopup="menu" aria-expanded="false" aria-label="Compartilhar">
+              <span data-stk-icon="share"></span><span class="action-btn-text">Compartilhar</span>
+            </button>
+            <div class="action-menu-list" role="menu">
+              <button type="button" class="action-menu-item" role="menuitem" id="btnShareCenario"><span data-stk-icon="copy"></span><span class="action-btn-label">Copiar link</span></button>
+              <button type="button" class="action-menu-item" role="menuitem" data-action="share-whatsapp"><span data-stk-icon="whatsapp"></span>WhatsApp</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
+  <div class="app-main-layout">
+    <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+    <aside class="app-sidebar" id="appSidebar" aria-label="Navegação principal">
+      <div class="sidebar-top-section">
+        <div class="sidebar-drawer-header">
+          <div class="sidebar-drawer-brand"><img class="app-logo app-logo-sm" src="icons/icon-64.png" alt=""><span>Liberdade Econômica</span></div>
+          <button type="button" class="btn-sidebar-close" id="btnCloseSidebar" aria-label="Fechar menu"><span data-stk-icon="close"></span></button>
+        </div>
+        <div class="sidebar-desktop-header"><span class="sidebar-title-text">Análises</span></div>
+        <nav class="sidebar-nav-list" role="tablist" aria-orientation="vertical">
+          <button type="button" class="sidebar-nav-item active" role="tab" id="abaBtnSimulador" aria-controls="abaSimulador" aria-selected="true" data-aba="simulador">
+            <span class="nav-item-inner"><span class="nav-icon"><span data-icon="sliders"></span></span><span class="nav-label">Simulador</span></span>
+          </button>
+          <button type="button" class="sidebar-nav-item" role="tab" id="abaBtnGreves" aria-controls="abaGreves" aria-selected="false" data-aba="greves" tabindex="-1">
+            <span class="nav-item-inner"><span class="nav-icon"><span data-icon="truck"></span></span><span class="nav-label">Greves reais</span></span>
+          </button>
+          <button type="button" class="sidebar-nav-item" role="tab" id="abaBtnDireitos" aria-controls="abaDireitos" aria-selected="false" data-aba="direitos" tabindex="-1">
+            <span class="nav-item-inner"><span class="nav-icon"><span data-icon="scale"></span></span><span class="nav-label">Direitos e limites</span></span>
+          </button>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="app-content-area">
     <main class="main-content">
       <div class="content-wrapper" style="display: flex; flex-direction: column; gap: 1.5rem;">
 
@@ -626,18 +632,30 @@
       </div>
     </main>
 
-    <!-- RODAPÉ GOVERNAMENTAL -->
-    <footer class="gov-footer">
-      <div class="content-wrapper footer-content">
-        <div>
-          <strong>Liberdade Econômica</strong> • Impacto econômico das greves no Brasil
+      <footer class="app-footer gov-footer">
+        <div class="content-wrapper footer-content">
+          <div>
+            <strong>Liberdade Econômica</strong> • Impacto econômico das greves no Brasil
+          </div>
+          <div>
+            <a href="https://celsoalmeidalf.github.io/calculadora-2026/">Observatório Fiscal</a> • ALMEIDA - 2026
+          </div>
         </div>
-        <div>
-          ALMEIDA - 2026
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
   </div>
+
+  <nav class="app-bottom-nav" id="appBottomNav" aria-label="Navegação principal">
+    <button type="button" class="bottom-nav-item active" role="tab" aria-controls="abaSimulador" aria-selected="true" data-aba="simulador">
+      <span><span data-icon="sliders"></span></span><span class="bottom-nav-label">Simular</span>
+    </button>
+    <button type="button" class="bottom-nav-item" role="tab" aria-controls="abaGreves" aria-selected="false" data-aba="greves" tabindex="-1">
+      <span><span data-icon="truck"></span></span><span class="bottom-nav-label">Greves</span>
+    </button>
+    <button type="button" class="bottom-nav-item" role="tab" aria-controls="abaDireitos" aria-selected="false" data-aba="direitos" tabindex="-1">
+      <span><span data-icon="scale"></span></span><span class="bottom-nav-label">Direitos</span>
+    </button>
+  </nav>
 
   <!-- TOAST NOTIFICATIONS -->
   <div class="toast-container" id="toastNotification" role="alert" aria-live="assertive">
@@ -646,6 +664,6 @@
   </div>
 
   <!-- ENTRYPOINT DA APLICAÇÃO (ES6 MODULE) -->
-  <script type="module" src="src/Program.js?v=20261104-1656"></script>
+  <script type="module" src="src/Program.js?v=20261104-1710"></script>
 </body>
 </html>

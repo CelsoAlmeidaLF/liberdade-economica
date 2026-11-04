@@ -49,7 +49,7 @@ for (const p of arquivos) {
 }
 const fontes = join(raiz, 'vendor', 'fonts');
 for (const nome of readdirSync(fontes)) if (nome.endsWith('.woff2')) shell.push(`vendor/fonts/${nome}`);
-shell.push('css/fonts.css', 'icons/icon-512.png', 'icons/icon-maskable-512.png');
+shell.push(`vendor/stk-gov/stk-gov-shell.js?v=${versao}`, `vendor/stk-gov/stk-gov-pwa.js?v=${versao}`, 'icons/icon-512.png', 'icons/icon-maskable-512.png');
 const unicos = [...new Set(shell)];
 const swPath = join(raiz, 'sw.js');
 const sw = readFileSync(swPath, 'utf8').replace(/\/\/ <versionar>[\s\S]*?\/\/ <\/versionar>/,

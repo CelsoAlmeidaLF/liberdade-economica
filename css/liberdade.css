@@ -238,64 +238,8 @@
 .tempo-publico { --tempo-cor: var(--accent-purple); }
 .tempo-consumo { --tempo-cor: var(--accent); }
 
-/* ───────── CELULAR: CARA DE APP ───────── */
-.btn-text-short { display: none; }
-
+/* ───────── CELULAR ───────── */
 @media (max-width: 639px) {
-  /* Topo compacto. Sem transform/backdrop-filter, senão a barra fixa de baixo fica presa no header */
-  .main-header {
-    transform: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    background: #1C1C1C;
-    padding-bottom: 8px;
-  }
-  .brand-icon-box { width: 32px; height: 32px; }
-  .brand-titles p { display: none; }
-
-  /* Ações viram barra de abas fixa no rodapé */
-  .header-actions {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 60;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
-    background: rgba(24, 24, 24, 0.94);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border-top: 1px solid var(--border-subtle);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
-  }
-  .header-actions .btn,
-  .header-actions .btn-primary,
-  .header-actions .btn-secondary,
-  .header-actions .btn-whatsapp {
-    flex-direction: column;
-    gap: 3px;
-    height: 52px;
-    padding: 0 2px;
-    background: transparent;
-    border: 0;
-    border-radius: var(--radius-lg);
-    color: var(--text-secondary);
-    font-size: 0.6875rem;
-    font-weight: 500;
-  }
-  .header-actions .btn-primary { color: var(--br-green-text); }
-  .header-actions .btn-whatsapp { color: #4ADE80; }
-  .header-actions .btn:active { background: rgba(255, 255, 255, 0.08); }
-  .header-actions .btn svg { width: 20px; height: 20px; }
-  .btn-text { display: none; }
-  .btn-text-short { display: inline; }
-
-  /* Espaço para a barra de abas e o aviso acima dela */
-  .app-container { padding-bottom: calc(68px + env(safe-area-inset-bottom)); }
-  .toast-container { bottom: calc(80px + env(safe-area-inset-bottom)); }
-
   /* Blocos com cantos de app e menos respiro lateral */
   .main-content .content-wrapper { gap: 1rem !important; padding: 0 12px; }
   .glass-panel { border-radius: 16px; padding: 14px; }
@@ -424,57 +368,10 @@
 /* ───────── ABAS NO MENU ───────── */
 .aba-painel { display: flex; flex-direction: column; gap: 1.5rem; }
 
-/* Computador: abas como grupo segmentado no topo, antes dos botões de ação */
-.nav-abas {
-  display: inline-flex;
-  gap: 2px;
-  padding: 2px;
-  border: 1px solid var(--border-default);
-  border-radius: calc(var(--radius-sm) + 2px);
-  background: rgba(255, 255, 255, 0.03);
-}
-.nav-abas .aba { border-color: transparent; background: transparent; color: var(--text-secondary); }
-.nav-abas .aba:hover:not(:disabled) { color: var(--text-primary); background: rgba(255, 255, 255, 0.06); }
-.nav-abas .aba[aria-selected="true"] { background: rgba(61, 214, 140, 0.16); color: var(--accent); }
-.aba:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
-
-.voltar-topo { display: none; }
-
 @media (max-width: 639px) {
-  /* Celular: as abas entram na barra de baixo junto com IBGE, CSV, Link e Enviar */
-  .header-actions { grid-template-columns: repeat(7, minmax(0, 1fr)) !important; }
-  .nav-abas { display: contents; }
-  .header-actions > a.btn { display: none; }
-  .header-actions .nav-abas .aba[aria-selected="true"] {
-    color: var(--accent);
-    background: rgba(61, 214, 140, 0.12);
-  }
-  .header-actions .nav-abas .aba[aria-selected="true"]::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 25%;
-    right: 25%;
-    height: 3px;
-    border-radius: 0 0 3px 3px;
-    background: var(--accent);
-  }
-  .header-actions .btn { position: relative; font-size: 0.625rem !important; }
-
-  /* O "Voltar" vai para o topo, ao lado da marca */
-  .voltar-topo {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    margin-right: -4px;
-    border-radius: var(--radius-lg);
-    color: var(--text-secondary);
-  }
-  .voltar-topo:active { background: rgba(255, 255, 255, 0.08); }
-  .voltar-topo svg { width: 20px; height: 20px; }
   .aba-painel { gap: 1rem; }
+  /* O nome do app tem prioridade no topo; a situação do IBGE segue no painel de abertura */
+  .brand-title-row .badge-status { display: none; }
 }
 
 /* ───────── DIREITOS E LIMITES ───────── */
@@ -551,36 +448,4 @@
 @media (max-width: 639px) {
   .referencias-grupo ol { padding-left: 22px; }
   .referencias-grupo small { display: block; margin-left: 0; }
-}
-
-/* ───────── LOGO OFICIAL (icons/) ───────── */
-.brand-icon-box.brand-logo { background: none; border: none; padding: 0; overflow: hidden; }
-.brand-logo img { width: 100%; height: 100%; display: block; }
-
-/* ───────── ATALHO "PULAR PARA O CONTEÚDO" ───────── */
-.skip-link {
-  position: fixed; top: 8px; left: 8px; z-index: 1000;
-  padding: 8px 14px; border-radius: 6px;
-  background: var(--surface-elevated); color: var(--text-primary); border: 1px solid var(--accent);
-  transform: translateY(-200%);
-}
-.skip-link:focus { transform: none; }
-main:focus { outline: none; }
-
-/* ───────── IMPRESSÃO ───────── */
-@media print {
-  :root {
-    color-scheme: light;
-    --bg: #fff; --bg-canvas: #fff; --bg-subtle: #fff; --surface: #fff; --surface-2: #f2f2f2;
-    --surface-acrylic: #fff; --surface-elevated: #fff; --surface-inset: #f7f7f7; --surface-overlay: #fff;
-    --line: #bbb; --border-subtle: #ccc; --border-default: #bbb;
-    --text-primary: #000; --text-secondary: #333; --text-tertiary: #555;
-    --accent: #006b2a; --up: #006b2a; --down: #a8202c; --warn: #7a5b00; --info: #005a85;
-  }
-  html, body { background: #fff !important; color: #000; height: auto !important; overflow: visible !important; }
-  * { box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-  .main-header, .skip-link, .btn, .gov-footer .btn { display: none !important; }
-  .app-container, .main-content { display: block !important; height: auto !important; overflow: visible !important; padding: 0 !important; }
-  tr, canvas { break-inside: avoid; }
-  h2, h3, h4 { break-after: avoid; }
 }

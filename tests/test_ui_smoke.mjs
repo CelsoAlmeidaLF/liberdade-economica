@@ -24,7 +24,8 @@ if (!chromeBin || typeof WebSocket === 'undefined') {
 let passou = 0;
 let falhou = 0;
 const assert = (cond, msg) => {
-  if (cond) { passou++; console.log(`  [PASS] ${msg}`); } else { falhou++; console.error(`  [FAIL] ${msg}`); }
+  // avaliar() devolve o texto "ERRO ..." quando a expressão quebra: isso é falha, não valor verdadeiro
+  if (cond && !String(cond).startsWith('ERRO')) { passou++; console.log(`  [PASS] ${msg}`); } else { falhou++; console.error(`  [FAIL] ${msg}`); }
 };
 
 // Servidor estático mínimo (o service worker e os módulos ES exigem http)
@@ -120,9 +121,9 @@ try {
   const link = await avaliar(copiar);
   assert(/tipo=categoria/.test(link) && /dias=37/.test(link) && /adesao=44/.test(link) && /aba=greves/.test(link), 'Copia o link com o cenário e a aba atuais');
   await esperar(100);
-  assert(await avaliar('btnShareCenario.querySelector(".btn-text").textContent === "Copiado!" && toastNotification.classList.contains("show")'), 'Botão e aviso confirmam a cópia');
+  assert(await avaliar('btnShareCenario.querySelector(".action-btn-label").textContent === "Copiado!" && toastNotification.classList.contains("show")'), 'Botão e aviso confirmam a cópia');
   await esperar(2200);
-  assert(await avaliar('btnShareCenario.querySelector(".btn-text").textContent === "Compartilhar" && btnShareCenario.querySelector(".btn-text-short").textContent === "Link"'), 'Botão volta ao texto normal');
+  assert(await avaliar('btnShareCenario.querySelector(".action-btn-label").textContent === "Copiar link"'), 'Botão volta ao texto normal');
   await avaliar('Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined }); btnShareCenario.click()'); await esperar(200);
   assert(await avaliar('location.hash.includes("dias=37") && /barra de endereço/.test(toastMessage.textContent)'), 'Sem área de transferência, o link vai para a barra de endereço');
   await trocarPara(link);
@@ -135,10 +136,22 @@ try {
   assert(await semRolagemLateral(), 'Simulador sem rolagem lateral');
   await avaliar('abaBtnGreves.click()'); await esperar(300);
   assert(await visivel('abaGreves') && await semRolagemLateral(), 'Greves reais sem rolagem lateral');
-  const barraUmaLinha = 'new Set([...document.querySelectorAll(".header-actions button")].map(b => b.getBoundingClientRect().top)).size === 1';
-  assert(await avaliar(`btnShareCenario.offsetHeight > 0 && ${barraUmaLinha}`), 'Botão Link fica na barra de baixo, numa linha só');
+  assert(await avaliar('getComputedStyle(appBottomNav).display !== "none" && getComputedStyle(appSidebar).position !== "static"'), 'Barra inferior aparece no celular');
+  await avaliar('document.querySelector(".bottom-nav-item[data-aba=direitos]").click()'); await esperar(300);
+  assert(await visivel('abaDireitos') && await avaliar('document.querySelector(".bottom-nav-item[data-aba=direitos]").classList.contains("active")'), 'Barra inferior troca de aba e marca a ativa');
+  assert(await avaliar('!!document.getElementById("btnSyncIbge").offsetParent && !!document.querySelector("[data-action=export-csv]").offsetParent'), 'IBGE e CSV continuam ao alcance no celular');
+
+  console.log('\n3b. Tablet (900 px): gaveta');
+  await tela(900);
+  await avaliar('btnToggleSidebar.click()'); await esperar(400);
+  assert(await avaliar('appSidebar.classList.contains("sidebar-open")'), 'Menu abre a gaveta');
+  await avaliar('abaBtnGreves.click()'); await esperar(400);
+  assert(await visivel('abaGreves') && await avaliar('!appSidebar.classList.contains("sidebar-open")'), 'Escolher a aba fecha a gaveta');
   await tela(320, true); await esperar(300);
-  assert(await avaliar(barraUmaLinha) && await semRolagemLateral(), 'Em 320 px a barra continua numa linha, sem rolagem lateral');
+  assert(await avaliar('document.querySelector(".action-menu").offsetHeight > 0') && await semRolagemLateral(), 'Em 320 px o menu Compartilhar continua no topo, sem rolagem lateral');
+  await avaliar('document.querySelector(".action-menu [aria-haspopup]").click()'); await esperar(200);
+  assert(await avaliar('btnShareCenario.offsetHeight > 0'), 'Menu Compartilhar mostra Copiar link');
+  await avaliar('document.body.click()');
   await tela(1400);
 
   console.log('\n6. Acessibilidade');

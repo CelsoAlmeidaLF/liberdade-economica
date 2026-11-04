@@ -1,228 +1,9 @@
 @charset "UTF-8";
-@import url('fonts.css');
 
 /* ==========================================================================
-   STK-GOVERNO-BRAZIL — FLUENT-SPECTRUM MINIMALIST DESIGN SYSTEM
-   Microsoft Fluent 2 (Mica/Acrylic) & Adobe Spectrum, grid de 8pt, cores do Brasil.
+   8.5. LIBERDADE-ECONOMICA — estilos do conteúdo
+   Tokens, base, topo, barra lateral e barra inferior vêm de vendor/stk-gov/stk-gov.css.
    ========================================================================== */
-
-/* ───────── 1. DESIGN TOKENS (MICROSOFT FLUENT 2 / ADOBE SPECTRUM) ───────── */
-:root {
-  /* Cores da bandeira do Brasil */
-  --br-green: #009C3B;
-  --br-green-text: #3DD68C;
-  --br-yellow: #FFDF00;
-  --br-yellow-text: #FFD43B;
-  --br-blue: #002776;
-  --br-blue-text: #6C9CFF;
-
-  /* Neutros no estilo Fluent 2 (tema escuro) */
-  --bg: #141414;
-  --surface: #1F1F1F;
-  --surface-2: #292929;
-  --line: #333333;
-
-  --bg-canvas: var(--bg);
-  --bg-subtle: #181818;
-  --surface-elevated: #2B2B2B;
-  --surface-inset: #181818;
-
-  --border-subtle: #303030;
-  --border-default: #3D3D3D;
-  --border-hover: #575757;
-
-  /* Acento e status */
-  --accent: var(--br-green-text);
-  --accent-brand: var(--br-green);
-  --accent-brand-hover: #00B347;
-  --accent-purple: #B794F6;
-  --up: #3DD68C;
-  --down: #F1707B;
-  --warn: var(--br-yellow-text);
-  --info: #5CC8F0;
-  --gold: var(--br-yellow-text);
-
-  /* Texto */
-  --text-primary: #FFFFFF;
-  --text-secondary: #ADADAD;
-  --text-tertiary: #8A8A8A;
-  --text-disabled: #5C5C5C;
-
-  /* Nomes usados pelos componentes destas calculadoras */
-  --text: var(--text-primary);
-  --text-muted: var(--text-secondary);
-  --text-subtle: var(--text-tertiary);
-  --bg-deep: var(--surface-inset);
-
-  --sans: "Segoe UI Variable Text", "Segoe UI", 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-  --mono: 'IBM Plex Mono', Menlo, Consolas, monospace;
-  --font-sans: var(--sans);
-  --font-mono: var(--mono);
-
-  /* Raios Fluent */
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-full: 9999px;
-
-  /* Elevação natural (sem borrões pesados) */
-  --elevation-low: 0 0 2px rgba(0, 0, 0, 0.24), 0 1px 2px rgba(0, 0, 0, 0.28);
-  --elevation-card: 0 0 2px rgba(0, 0, 0, 0.24), 0 2px 4px rgba(0, 0, 0, 0.28);
-  --elevation-hover: 0 0 2px rgba(0, 0, 0, 0.24), 0 8px 16px rgba(0, 0, 0, 0.28);
-  --elevation-dropdown: 0 0 8px rgba(0, 0, 0, 0.24), 0 32px 64px rgba(0, 0, 0, 0.28);
-
-  --transition-fast: 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-  --transition-normal: 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
-}
-
-/* ───────── 2. RESET & BASE ───────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-size: 16px;
-  scroll-behavior: smooth;
-  color-scheme: dark;
-  -webkit-text-size-adjust: 100%;
-  overflow-x: clip;
-}
-
-body {
-  font-family: var(--sans);
-  font-size: 0.875rem;
-  font-feature-settings: "cv11", "ss01";
-  background-color: var(--bg-canvas);
-  background-image:
-    radial-gradient(1000px 420px at 0% -8%, rgba(0, 156, 59, 0.10), transparent 60%),
-    radial-gradient(800px 360px at 100% -6%, rgba(255, 223, 0, 0.05), transparent 60%);
-  background-attachment: fixed;
-  color: var(--text-primary);
-  min-height: 100vh;
-  line-height: 1.45;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: clip;
-}
-
-h1, h2, h3, h4, .font-title {
-  font-family: var(--sans);
-  letter-spacing: -0.01em;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-button, input, select, textarea {
-  font-family: inherit;
-  color: inherit;
-}
-
-/* Números tabulares: IBM Plex Mono como no Painel Eleições */
-.font-mono, .code-text, .tabular-nums {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-}
-
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #4A4A4A; border-radius: var(--radius-full); }
-::-webkit-scrollbar-thumb:hover { background: #6A6A6A; }
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* ───────── 3. LAYOUT ───────── */
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.content-wrapper {
-  max-width: 1280px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 16px;
-}
-
-@media (min-width: 640px) {
-  .content-wrapper { padding: 0 24px; }
-}
-
-/* ───────── 4. BARRA SUPERIOR (APP TOPBAR FLUENT) ───────── */
-.main-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: rgba(28, 28, 28, 0.82);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  padding: 10px 0;
-  transform: translateZ(0);
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px 16px;
-  flex-wrap: wrap;
-}
-
-.brand-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.brand-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(0, 156, 59, 0.28) 0%, rgba(255, 223, 0, 0.12) 100%);
-  border: 1px solid rgba(61, 214, 140, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--br-green-text);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  flex-shrink: 0;
-}
-
-.brand-titles { min-width: 0; }
-
-.brand-titles h1 {
-  font-size: 0.9375rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.brand-titles p {
-  font-family: var(--mono);
-  font-size: 0.6875rem;
-  color: var(--text-secondary);
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
 
 /* ───────── 5. BADGES DE STATUS ───────── */
 .badge-status {
@@ -893,25 +674,7 @@ input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offs
   align-items: center;
 }
 
-/* ───────── 19. RODAPÉ (FAIXA COM AS CORES DO BRASIL) ───────── */
-.gov-footer {
-  position: relative;
-  background: #181818;
-  border-top: 1px solid var(--border-subtle);
-  padding: 20px 0;
-  font-size: 0.75rem;
-  color: var(--text-tertiary);
-}
-
-.gov-footer::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--br-green) 0 50%, var(--br-yellow) 50% 75%, var(--br-blue) 75% 100%);
-  opacity: 0.8;
-}
-
+/* ───────── 19. RODAPÉ ───────── */
 .footer-content {
   display: flex;
   justify-content: space-between;
@@ -958,12 +721,6 @@ input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offs
 
 /* ───────── 22. CELULAR (ATÉ 639PX) ───────── */
 @media (max-width: 639px) {
-  html { -webkit-tap-highlight-color: transparent; }
-  .main-header {
-    padding-top: calc(8px + env(safe-area-inset-top));
-  }
-  .header-actions { width: 100%; }
-  .header-actions .btn { flex: 1 1 auto; }
   .tabs-list { display: flex; }
   .glass-panel { padding: 16px; }
   .panel-header { flex-wrap: wrap; }
@@ -973,4 +730,9 @@ input[type=range]:focus-visible { outline: 2px solid var(--accent); outline-offs
 /* Movimento reduzido */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+
+.content-wrapper { max-width: 1280px; margin: 0 auto; width: 100%; padding: 0 16px; }
+@media (min-width: 640px) {
+  .content-wrapper { padding: 0 24px; }
 }

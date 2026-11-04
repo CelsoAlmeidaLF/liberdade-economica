@@ -1,11 +1,11 @@
-import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261104-1656';
-import { SETORES } from '../domain/SetorConsumo.js?v=20261104-1656';
-import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261104-1656';
-import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261104-1656';
-import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261104-1656';
-import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261104-1656';
-import { SvgIcons } from './SvgIcons.js?v=20261104-1656';
-import { CenarioUrl } from './CenarioUrl.js?v=20261104-1656';
+import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261104-1710';
+import { SETORES } from '../domain/SetorConsumo.js?v=20261104-1710';
+import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261104-1710';
+import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261104-1710';
+import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261104-1710';
+import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261104-1710';
+import { SvgIcons } from './SvgIcons.js?v=20261104-1710';
+import { CenarioUrl } from './CenarioUrl.js?v=20261104-1710';
 
 const brl = CivicPressureModel.formatBRL;
 const pct = (v, casas = 2) => `${Number(v).toFixed(casas).replace('.', ',')}%`;
@@ -172,11 +172,15 @@ export class CivicView {
     this.abas = [...document.querySelectorAll('[role="tab"][data-aba]')];
     if (this.abas.length === 0) return;
 
-    this.abas.forEach((aba, i) => {
+    this.abas.forEach(aba => {
       aba.addEventListener('click', () => this.abrirAba(aba.dataset.aba, true));
       aba.addEventListener('keydown', e => {
-        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-        const proxima = this.abas[(i + (e.key === 'ArrowRight' ? 1 : this.abas.length - 1)) % this.abas.length];
+        const passo = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        if (!passo) return;
+        e.preventDefault();
+        // A mesma aba existe na barra lateral e na de baixo: navega só entre as visíveis
+        const visiveis = this.abas.filter(item => item.offsetParent !== null);
+        const proxima = visiveis[(visiveis.indexOf(aba) + passo + visiveis.length) % visiveis.length];
         this.abrirAba(proxima.dataset.aba, true);
         proxima.focus();
       });
@@ -256,7 +260,7 @@ export class CivicView {
 
   /** Troca o texto do botão por alguns segundos */
   _avisarCopiado() {
-    const textos = [...this.btnShareCenario.querySelectorAll('.btn-text, .btn-text-short')];
+    const textos = [...this.btnShareCenario.querySelectorAll('.action-btn-label')];
     this._textosShare ??= textos.map(el => el.textContent);
     textos.forEach(el => { el.textContent = 'Copiado!'; });
     clearTimeout(this._shareTimeout);
@@ -271,6 +275,7 @@ export class CivicView {
     this.abas.forEach(aba => {
       const ativa = aba.dataset.aba === nome;
       aba.setAttribute('aria-selected', String(ativa));
+      aba.classList.toggle('active', ativa);
       aba.tabIndex = ativa ? 0 : -1;
       const painel = document.getElementById(aba.getAttribute('aria-controls'));
       if (painel) painel.hidden = !ativa;
