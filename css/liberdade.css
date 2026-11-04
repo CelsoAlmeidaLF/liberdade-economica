@@ -441,8 +441,8 @@
 .voltar-topo { display: none; }
 
 @media (max-width: 639px) {
-  /* Celular: as abas entram na barra de baixo junto com IBGE, CSV e Enviar */
-  .header-actions { grid-template-columns: repeat(6, 1fr) !important; }
+  /* Celular: as abas entram na barra de baixo junto com IBGE, CSV, Link e Enviar */
+  .header-actions { grid-template-columns: repeat(7, minmax(0, 1fr)) !important; }
   .nav-abas { display: contents; }
   .header-actions > a.btn { display: none; }
   .header-actions .nav-abas .aba[aria-selected="true"] {

@@ -21,8 +21,8 @@
   <meta property="og:type" content="website">
 
   <!-- Design System Canônico & Estilos Locais -->
-  <link rel="stylesheet" href="css/style.css?v=20261104-1639">
-  <link rel="stylesheet" href="css/liberdade.css?v=20261104-1639">
+  <link rel="stylesheet" href="css/style.css?v=20261104-1656">
+  <link rel="stylesheet" href="css/liberdade.css?v=20261104-1656">
   
   <!-- Biblioteca Vendored Local-First para Gráficos -->
   <script src="vendor/chart.js/chart.umd.js"></script>
@@ -77,6 +77,10 @@
           <button class="btn btn-secondary" data-action="export-csv" title="Exportar dados completos em formato CSV">
             <span data-icon="fileSpreadsheet"></span>
             <span class="btn-text">Exportar CSV</span><span class="btn-text-short">CSV</span>
+          </button>
+          <button class="btn btn-secondary" id="btnShareCenario" type="button" title="Copiar link deste cenário">
+            <span data-icon="copy"></span>
+            <span class="btn-text">Compartilhar</span><span class="btn-text-short">Link</span>
           </button>
           <button class="btn btn-whatsapp" data-action="share-whatsapp" title="Compartilhar nota técnica via WhatsApp">
             <span data-icon="whatsapp"></span>
@@ -642,6 +646,6 @@
   </div>
 
   <!-- ENTRYPOINT DA APLICAÇÃO (ES6 MODULE) -->
-  <script type="module" src="src/Program.js?v=20261104-1639"></script>
+  <script type="module" src="src/Program.js?v=20261104-1656"></script>
 </body>
 </html>

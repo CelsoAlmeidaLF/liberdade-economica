@@ -1,7 +1,7 @@
 /**
  * Teste de fumaça da tela, num Chrome de verdade (headless), sem dependências npm.
  * Sobe um servidor local e confere: sem erros de JavaScript nem bloqueios da CSP, abas, endereço
- * da aba, celular sem rolagem lateral, atalho de teclado, service worker e abertura sem internet.
+ * da aba e do cenário, botão Compartilhar, celular sem rolagem lateral, atalho de teclado, service worker e abertura sem internet.
  *
  * Uso: node --experimental-websocket tests/test_ui_smoke.mjs   (Node 22+ dispensa a flag)
  * Sem Chrome instalado, o teste é pulado (sai com código 0 e avisa).
@@ -97,21 +97,56 @@ try {
   await abrir(`${base}#naoexiste`);
   assert(await visivel('abaSimulador'), 'Endereço desconhecido cai no simulador');
 
-  console.log('\n3. Celular (400 px)');
+  console.log('\n3. Cenário no endereço');
+  const trocarPara = async url => { await cdp('Page.navigate', { url: 'about:blank' }); await esperar(300); await abrir(url); };
+  await trocarPara(`${base}#tipo=publico&orgao=inss&servidores=20000&adesao=35&atendimentos=45&dias=30`);
+  assert(await avaliar('document.querySelector("#tipoChips [aria-pressed=true]").dataset.id === "publico" && document.querySelector("#orgaoChips [aria-pressed=true]").dataset.id === "inss"'), 'Link marca o tipo e o órgão');
+  assert(await avaliar('cInputServidores.value === "20000" && cInputAdesaoPub.value === "35" && cInputAtendimentos.value === "40" && cInputDays.value === "30"'), 'Link acerta os controles e os números vencem os valores do órgão');
+  await trocarPara(`${base}#tipo=transporte&setor=carga&adesao=55&recuperacao=20&cascata=0&aba=greves`);
+  assert(await visivel('abaGreves') && await avaliar('cInputAdesao.value === "55" && cInputRecuperacao.value === "20" && !cInputCascata.checked'), 'Link abre a aba e aplica o cenário de produção');
+  await avaliar('abaBtnDireitos.click()'); await esperar(200);
+  assert(await avaliar('location.hash.includes("aba=direitos") && location.hash.includes("adesao=55")'), 'Trocar de aba mantém o cenário no endereço');
+  await avaliar('abaBtnSimulador.click()'); await esperar(200);
+  assert(await avaliar('!location.hash.includes("aba=") && location.hash.includes("adesao=55")'), 'Voltar ao simulador tira só a aba do endereço');
+  await avaliar('location.hash = "tipo=geral&dias=9"'); await esperar(300);
+  assert(await avaliar('document.querySelector("#tipoChips [aria-pressed=true]").dataset.id === "geral" && cInputDays.value === "9"'), 'Colar outro link na mesma página aplica o cenário');
+
+  console.log('\n4. Botão Compartilhar');
+  await trocarPara(base);
+  const copiar = 'new Promise(r => { window.__copia = null; Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async t => { window.__copia = t; r(t); } } }); btnShareCenario.click(); })';
+  await avaliar('document.querySelector("#tipoChips [data-id=categoria]").click()'); await esperar(200);
+  await avaliar('(() => { cInputDays.value = 37; cInputDays.dispatchEvent(new Event("input")); cInputAdesao.value = 44; cInputAdesao.dispatchEvent(new Event("input")); })()');
+  await avaliar('abaBtnGreves.click()'); await esperar(200);
+  const link = await avaliar(copiar);
+  assert(/tipo=categoria/.test(link) && /dias=37/.test(link) && /adesao=44/.test(link) && /aba=greves/.test(link), 'Copia o link com o cenário e a aba atuais');
+  await esperar(100);
+  assert(await avaliar('btnShareCenario.querySelector(".btn-text").textContent === "Copiado!" && toastNotification.classList.contains("show")'), 'Botão e aviso confirmam a cópia');
+  await esperar(2200);
+  assert(await avaliar('btnShareCenario.querySelector(".btn-text").textContent === "Compartilhar" && btnShareCenario.querySelector(".btn-text-short").textContent === "Link"'), 'Botão volta ao texto normal');
+  await avaliar('Object.defineProperty(navigator, "clipboard", { configurable: true, value: undefined }); btnShareCenario.click()'); await esperar(200);
+  assert(await avaliar('location.hash.includes("dias=37") && /barra de endereço/.test(toastMessage.textContent)'), 'Sem área de transferência, o link vai para a barra de endereço');
+  await trocarPara(link);
+  assert(await visivel('abaGreves') && await avaliar('document.querySelector("#tipoChips [aria-pressed=true]").dataset.id === "categoria" && cInputDays.value === "37" && cInputAdesao.value === "44"'), 'O link copiado reabre o mesmo cenário');
+
+  console.log('\n5. Celular (400 e 320 px)');
   await tela(400, true);
   await cdp('Page.navigate', { url: 'about:blank' }); await esperar(300);
   await abrir();
   assert(await semRolagemLateral(), 'Simulador sem rolagem lateral');
   await avaliar('abaBtnGreves.click()'); await esperar(300);
   assert(await visivel('abaGreves') && await semRolagemLateral(), 'Greves reais sem rolagem lateral');
+  const barraUmaLinha = 'new Set([...document.querySelectorAll(".header-actions button")].map(b => b.getBoundingClientRect().top)).size === 1';
+  assert(await avaliar(`btnShareCenario.offsetHeight > 0 && ${barraUmaLinha}`), 'Botão Link fica na barra de baixo, numa linha só');
+  await tela(320, true); await esperar(300);
+  assert(await avaliar(barraUmaLinha) && await semRolagemLateral(), 'Em 320 px a barra continua numa linha, sem rolagem lateral');
   await tela(1400);
 
-  console.log('\n4. Acessibilidade');
+  console.log('\n6. Acessibilidade');
   await avaliar('abaBtnSimulador.click()'); await esperar(200);
   await avaliar('document.querySelector(".skip-link").click()');
   assert(await avaliar('document.activeElement === document.querySelector("main") && !abaSimulador.hidden'), 'Atalho leva o foco ao conteúdo sem trocar de aba');
 
-  console.log('\n5. PWA');
+  console.log('\n7. PWA');
   await avaliar('navigator.serviceWorker.ready.then(() => true)');
   await esperar(1500);
   assert(await avaliar('navigator.serviceWorker.getRegistration().then(r => !!(r && r.active))'), 'Service worker ativo');

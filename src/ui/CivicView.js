@@ -1,10 +1,11 @@
-import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261104-1639';
-import { SETORES } from '../domain/SetorConsumo.js?v=20261104-1639';
-import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261104-1639';
-import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261104-1639';
-import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261104-1639';
-import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261104-1639';
-import { SvgIcons } from './SvgIcons.js?v=20261104-1639';
+import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261104-1656';
+import { SETORES } from '../domain/SetorConsumo.js?v=20261104-1656';
+import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261104-1656';
+import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261104-1656';
+import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261104-1656';
+import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261104-1656';
+import { SvgIcons } from './SvgIcons.js?v=20261104-1656';
+import { CenarioUrl } from './CenarioUrl.js?v=20261104-1656';
 
 const brl = CivicPressureModel.formatBRL;
 const pct = (v, casas = 2) => `${Number(v).toFixed(casas).replace('.', ',')}%`;
@@ -165,7 +166,7 @@ export class CivicView {
   }
 
   /**
-   * Abas Simulador / Greves reais. O endereço guarda a aba (#greves) para o link abrir nela.
+   * Abas do app. O endereço guarda a aba e o cenário para o link abrir igual.
    */
   _configurarAbas() {
     this.abas = [...document.querySelectorAll('[role="tab"][data-aba]')];
@@ -181,17 +182,92 @@ export class CivicView {
       });
     });
 
-    window.addEventListener('hashchange', () => this.abrirAba(this._abaDoEndereco(), false));
-    this.abrirAba(this._abaDoEndereco(), false);
+    window.addEventListener('hashchange', () => this._abrirEndereco());
+    this._abrirEndereco();
   }
 
-  _abaDoEndereco() {
-    const nome = location.hash.slice(1);
-    return this.abas.some(a => a.dataset.aba === nome) ? nome : 'simulador';
+  /** Aplica o que veio no endereço: primeiro o cenário, depois a aba */
+  _abrirEndereco() {
+    const cenario = CenarioUrl.ler(location.href) || {};
+    this._aplicarCenario(cenario);
+    this.abrirAba(cenario.aba || 'simulador', false);
+  }
+
+  /**
+   * Tipo, setor e órgão vêm antes porque trazem valores típicos; os números do link ficam por cima.
+   * O render() que segue cada mudança acerta os controles da tela.
+   */
+  _aplicarCenario(cenario) {
+    if (cenario.tipo) this.service.selecionarTipo(cenario.tipo);
+    const tipo = this.service.state.tipoGreve;
+    if (cenario.setor && tipo === 'consumo') this.service.selecionarSetor(cenario.setor);
+    else if (cenario.setor && tipo !== 'publico') this.service.selecionarSetorProducao(cenario.setor);
+    if (cenario.orgao && tipo === 'publico') this.service.selecionarOrgao(cenario.orgao);
+
+    const { aba, tipo: _tipo, setor, orgao, cascata, ...numeros } = cenario;
+    const params = cascata === undefined ? numeros : { ...numeros, usarCascata: cascata };
+    if (Object.keys(params).length) this.service.updateParams(params);
+  }
+
+  /** Cenário atual nos campos do CenarioUrl. Vão só o setor e o órgão que valem para o tipo de greve */
+  _cenarioAtual() {
+    const s = this.service.state;
+    const consumo = s.tipoGreve === 'consumo';
+    const publico = s.tipoGreve === 'publico';
+    return {
+      aba: this.abaAtual === 'simulador' ? undefined : this.abaAtual,
+      tipo: s.tipoGreve,
+      setor: publico ? undefined : (consumo ? s.setor : s.setorProducao),
+      orgao: publico ? s.orgao : undefined,
+      dias: s.dias,
+      participantes: s.participantes,
+      retencaoDiaria: s.retencaoDiaria,
+      taxRatio: s.taxRatio,
+      adiadoPct: s.adiadoPct,
+      adesaoPct: s.adesaoPct,
+      recuperacaoPct: s.recuperacaoPct,
+      servidores: s.servidores,
+      remuneracaoMensal: s.remuneracaoMensal,
+      atendimentosDia: s.atendimentosDia,
+      cascata: s.usarCascata
+    };
+  }
+
+  /** Endereço da aba: se o link trouxe um cenário, ele continua lá */
+  _enderecoDaAba(nome) {
+    const { aba, ...cenario } = CenarioUrl.ler(location.href) || {};
+    const simulador = nome === 'simulador';
+    if (Object.keys(cenario).length) return CenarioUrl.montar(location.href, simulador ? cenario : { ...cenario, aba: nome });
+    return simulador ? location.pathname + location.search : `#${nome}`;
+  }
+
+  async _compartilharCenario() {
+    const link = CenarioUrl.montar(location.href, this._cenarioAtual());
+    try {
+      await navigator.clipboard.writeText(link);
+      this._avisarCopiado();
+      this.triggerToast('Link do cenário copiado.');
+    } catch {
+      // Sem área de transferência (http ou permissão negada): o link fica na barra de endereço
+      history.replaceState(null, '', link);
+      this.triggerToast('Não deu para copiar. O link do cenário está na barra de endereço.');
+    }
+  }
+
+  /** Troca o texto do botão por alguns segundos */
+  _avisarCopiado() {
+    const textos = [...this.btnShareCenario.querySelectorAll('.btn-text, .btn-text-short')];
+    this._textosShare ??= textos.map(el => el.textContent);
+    textos.forEach(el => { el.textContent = 'Copiado!'; });
+    clearTimeout(this._shareTimeout);
+    this._shareTimeout = setTimeout(() => {
+      textos.forEach((el, i) => { el.textContent = this._textosShare[i]; });
+    }, 2000);
   }
 
   abrirAba(nome, atualizarEndereco) {
     if (!this.abas) return;
+    this.abaAtual = nome;
     this.abas.forEach(aba => {
       const ativa = aba.dataset.aba === nome;
       aba.setAttribute('aria-selected', String(ativa));
@@ -200,7 +276,7 @@ export class CivicView {
       if (painel) painel.hidden = !ativa;
     });
     if (atualizarEndereco) {
-      history.replaceState(null, '', nome === 'simulador' ? location.pathname + location.search : `#${nome}`);
+      history.replaceState(null, '', this._enderecoDaAba(nome));
       // Como num app: a aba nova abre do começo
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
@@ -218,6 +294,7 @@ export class CivicView {
     this.ibgeStatusBadge = $('ibgeStatusBadge');
     this.lblLastSyncTime = $('lblLastSyncTime');
     this.lblPopBase = $('lblPopBase');
+    this.btnShareCenario = $('btnShareCenario');
 
     // Controles deslizantes
     this.sliders = {};
@@ -312,6 +389,10 @@ export class CivicView {
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
       });
     });
+
+    if (this.btnShareCenario) {
+      this.btnShareCenario.addEventListener('click', () => this._compartilharCenario());
+    }
 
     document.querySelectorAll('[data-ordem]').forEach(btn => {
       btn.addEventListener('click', () => {

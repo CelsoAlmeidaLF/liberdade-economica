@@ -12,6 +12,7 @@ import { DivisaoCusto } from '../src/domain/DivisaoCusto.js';
 import { PIB_REFERENCIA, OTICA_RENDA } from '../src/domain/ArrecadacaoReferencia.js';
 import { DIREITOS } from '../src/domain/DireitosGreve.js';
 import { PwaRegistrar } from '../src/infrastructure/PwaRegistrar.js';
+import { CenarioUrl } from '../src/ui/CenarioUrl.js';
 
 let passed = 0;
 let failed = 0;
@@ -275,6 +276,71 @@ assert(await new PwaRegistrar({ nav: navFalso, seguro: false }).registrar() === 
 assert(await new PwaRegistrar({ nav: {}, seguro: true }).registrar() === false, 'Navegador sem service worker segue sem erro');
 const navComFalha = { serviceWorker: { register: async () => { throw new Error('falhou'); } } };
 assert(await new PwaRegistrar({ nav: navComFalha, seguro: true }).registrar() === false, 'Falha no registro não derruba o app');
+
+// 14. Cenário no endereço da página
+console.log('\n14. Teste do CenarioUrl');
+const BASE_URL = 'https://x/index.html';
+
+// Links legados
+assert(CenarioUrl.ler(`${BASE_URL}#greves`).aba === 'greves', 'Link legado #greves abre a aba de greves');
+assert(CenarioUrl.ler(`${BASE_URL}#direitos`).aba === 'direitos', 'Link legado #direitos abre a aba de direitos');
+assert(CenarioUrl.ler(`${BASE_URL}#aba=greves`).aba === 'greves', 'Aba também vem por parâmetro (#aba=greves)');
+assert(CenarioUrl.ler(BASE_URL) === null && CenarioUrl.ler(`${BASE_URL}#`) === null && CenarioUrl.ler(undefined) === null, 'Sem # não há cenário');
+assert(CenarioUrl.ler(`${BASE_URL}#desconhecida`) === null, 'Aba desconhecida não vira cenário');
+
+// Cenário completo
+const completo = CenarioUrl.ler(`${BASE_URL}#aba=simulador&tipo=publico&setor=carga&orgao=inss&dias=11&participantes=2500000&gasto=50&tributo=21.8&adiado=40&adesao=80&recuperacao=25&servidores=100000&remuneracao=9000&atendimentos=20&cascata=1`);
+assert(JSON.stringify(completo) === JSON.stringify({
+  aba: 'simulador', tipo: 'publico', setor: 'carga', orgao: 'inss', dias: 11, participantes: 2500000,
+  retencaoDiaria: 50, taxRatio: 21.8, adiadoPct: 40, adesaoPct: 80, recuperacaoPct: 25,
+  servidores: 100000, remuneracaoMensal: 9000, atendimentosDia: 20, cascata: true
+}), 'Lê o cenário completo com os nomes do estado');
+const curto = CenarioUrl.ler(`${BASE_URL}#tipo=transporte&setor=caminhoneiros&adesao=80&dias=11`);
+assert(curto.tipo === 'transporte' && curto.setor === 'caminhoneiros' && curto.adesaoPct === 80 && curto.dias === 11, 'Lê um cenário parcial');
+assert(Object.keys(curto).length === 4, 'Cenário parcial traz só os campos informados');
+assert(CenarioUrl.ler(`${BASE_URL}#cascata=0`).cascata === false, 'cascata=0 desliga o efeito cascata');
+assert(CenarioUrl.ler(`${BASE_URL}#adiado=0&recuperacao=0`).adiadoPct === 0, 'Zero é valor válido onde o limite permite');
+
+// Vírgula decimal
+const virgula = CenarioUrl.ler(`${BASE_URL}#tributo=21,8&gasto=12,5`);
+assert(virgula.taxRatio === 21.8 && virgula.retencaoDiaria === 12.5, 'Aceita vírgula decimal');
+
+// Limites: extremos entram, o que passa deles fica de fora
+const LIMITES = [
+  ['dias', 'dias', 1, 365], ['participantes', 'participantes', 1000, 100000000], ['gasto', 'retencaoDiaria', 1, 1000],
+  ['tributo', 'taxRatio', 5, 60], ['adiado', 'adiadoPct', 0, 100], ['adesao', 'adesaoPct', 1, 100],
+  ['recuperacao', 'recuperacaoPct', 0, 100], ['servidores', 'servidores', 10, 5000000],
+  ['remuneracao', 'remuneracaoMensal', 1000, 100000], ['atendimentos', 'atendimentosDia', 1, 50]
+];
+LIMITES.forEach(([chave, campo, min, max]) => {
+  assert(CenarioUrl.ler(`${BASE_URL}#${chave}=${min}`)[campo] === min && CenarioUrl.ler(`${BASE_URL}#${chave}=${max}`)[campo] === max, `${chave}: aceita os limites ${min} e ${max}`);
+  assert(CenarioUrl.ler(`${BASE_URL}#${chave}=${max + 1}`) === null, `${chave}: rejeita acima de ${max}`);
+  assert(CenarioUrl.ler(`${BASE_URL}#${chave}=${min - 0.5}`) === null, `${chave}: rejeita abaixo de ${min}`);
+});
+
+// Valores corrompidos
+['', 'abc', '1e2', '0x10', 'Infinity', 'NaN', '-5', '1.000,50', '10,5,5'].forEach(lixo => {
+  assert(CenarioUrl.ler(`${BASE_URL}#adiado=${lixo}`) === null, `Rejeita número corrompido: "${lixo}"`);
+});
+assert(CenarioUrl.ler(`${BASE_URL}#tipo=greve-falsa&aba=painel&cascata=2`) === null, 'Rejeita tipo, aba e cascata fora da lista');
+const parcial = CenarioUrl.ler(`${BASE_URL}#dias=999&adesao=50`);
+assert(parcial.adesaoPct === 50 && !('dias' in parcial), 'Campo inválido não derruba os válidos');
+
+// Sanitização
+assert(CenarioUrl.ler(`${BASE_URL}#setor=%3Cscript%3Ealert(1)%3C%2Fscript%3E`).setor === 'scriptalert1script', 'Setor perde os caracteres de marcação');
+assert(CenarioUrl.ler(`${BASE_URL}#orgao=INSS`).orgao === 'inss', 'Órgão vira minúsculo como os ids');
+assert(CenarioUrl.ler(`${BASE_URL}#setor=${'a'.repeat(100)}`).setor.length === 40, 'Setor tem tamanho limitado');
+assert(CenarioUrl.ler(`${BASE_URL}#setor=%3C%3E&orgao=constructor`) === null, 'Texto vazio ou nome interno do JavaScript não passa');
+
+// Montagem
+const montado = CenarioUrl.montar(`${BASE_URL}#velho`, { tipo: 'transporte', setor: 'carga', adesaoPct: 80, dias: 11, cascata: false });
+assert(montado === `${BASE_URL}#tipo=transporte&setor=carga&dias=11&adesao=80&cascata=0`, 'Monta o link com os parâmetros e troca o # antigo');
+assert(JSON.stringify(CenarioUrl.ler(CenarioUrl.montar(BASE_URL, completo))) === JSON.stringify(completo), 'Ida e volta preserva o cenário completo');
+const soValidos = CenarioUrl.montar(BASE_URL, { aba: 'painel', tipo: 'x', setor: '<>', dias: 999, adesaoPct: null, taxRatio: undefined, adiadoPct: 0, cascata: 'sim' });
+assert(soValidos === `${BASE_URL}#adiado=0`, 'Monta só os valores válidos informados');
+assert(CenarioUrl.montar(`${BASE_URL}#greves`, {}) === BASE_URL && CenarioUrl.montar(BASE_URL) === BASE_URL, 'Sem valores válidos não sobra # no link');
+assert(CenarioUrl.montar(BASE_URL, { taxRatio: 21.800000000000001 }) === `${BASE_URL}#tributo=21.8`, 'Número vai no link com até duas casas');
+assert(CenarioUrl.montar(BASE_URL, { setor: 'carga&dias=999' }) === `${BASE_URL}#setor=cargadias999`, 'Texto não injeta outro parâmetro no link');
 
 console.log(`\n========================================`);
 console.log(`Total: ${passed + failed} | Passou: ${passed} | Falhou: ${failed}`);

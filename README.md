@@ -11,7 +11,9 @@
 - **Greves reais** (`#greves`): efeito nos preços, biblioteca de greves, comparação, linha do tempo e referências.
 - **Direitos e limites** (`#direitos`, `DireitosGreve.js`): Lei de Greve, greve no setor público, boicote e bloqueio de estradas (CTB art. 253-A), cada tema com pode / exige / não pode / visão liberal e de direita / consequência e fontes.
 
-No computador as abas ficam no topo; no celular, na barra de baixo junto com IBGE, CSV e Enviar.
+No computador as abas ficam no topo; no celular, na barra de baixo junto com IBGE, CSV, Link e Enviar.
+
+**Compartilhar** copia um link com o cenário e a aba atuais (`CenarioUrl.js`), por exemplo `index.html#tipo=transporte&setor=carga&adesao=80&dias=11`. Quem abre vê os mesmos valores. Os links antigos, como `#greves`, continuam valendo.
 
 ## Tipos de greve (`TiposGreve.js`, `GreveProducaoModel.js`)
 
@@ -135,6 +137,7 @@ Na pesquisa de Chenoweth e Stephan, campanhas de massa contra governos que mobil
 │   └── ui/                      # Camada de apresentação e interface
 │       ├── SvgIcons.js          # Ícones vetorizados Lucide / FinancIcons
 │       ├── AtalhoConteudo.js    # "Pular para o conteúdo"
+│       ├── CenarioUrl.js        # Cenário do simulador no endereço da página
 │       └── CivicView.js         # Controle reativo do DOM e eventos
 ├── vendor/
 │   ├── chart.js/chart.umd.js    # Chart.js 4.4.1 vendored localmente

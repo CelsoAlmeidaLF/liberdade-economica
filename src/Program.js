@@ -1,11 +1,11 @@
-import { IbgeGateway } from './infrastructure/IbgeGateway.js?v=20261104-1639';
-import { PwaRegistrar } from './infrastructure/PwaRegistrar.js?v=20261104-1639';
-import { criarAtalhoConteudo } from './ui/AtalhoConteudo.js?v=20261104-1639';
-import { ChartAdapter } from './infrastructure/ChartAdapter.js?v=20261104-1639';
-import { CivicPressureService } from './application/CivicPressureService.js?v=20261104-1639';
-import { CivicView } from './ui/CivicView.js?v=20261104-1639';
-import { renderIcons } from './ui/SvgIcons.js?v=20261104-1639';
-import { IPCA_2018 } from './domain/CasosReais.js?v=20261104-1639';
+import { IbgeGateway } from './infrastructure/IbgeGateway.js?v=20261104-1656';
+import { PwaRegistrar } from './infrastructure/PwaRegistrar.js?v=20261104-1656';
+import { criarAtalhoConteudo } from './ui/AtalhoConteudo.js?v=20261104-1656';
+import { ChartAdapter } from './infrastructure/ChartAdapter.js?v=20261104-1656';
+import { CivicPressureService } from './application/CivicPressureService.js?v=20261104-1656';
+import { CivicView } from './ui/CivicView.js?v=20261104-1656';
+import { renderIcons } from './ui/SvgIcons.js?v=20261104-1656';
+import { IPCA_2018 } from './domain/CasosReais.js?v=20261104-1656';
 
 /**
  * Composition Root do app Liberdade Econômica
