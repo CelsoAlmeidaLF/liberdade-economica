@@ -1,6 +1,6 @@
 # Liberdade Econômica
 
-**App publicado:** https://celsoalmeidalf.github.io/liberdade-economica-2026/
+**App publicado:** https://celsoalmeidalf.github.io/liberdade-economica/
 
 **Ícone oficial:** `icons/` (favicon, logo do cabeçalho, tela inicial do celular via `manifest.webmanifest` e prévia de compartilhamento `og-image.jpg`). A imagem original fica em `icons/` e os tamanhos são gerados dela.
 

@@ -21,7 +21,7 @@ const AQUI = dirname(fileURLToPath(import.meta.url));
 const RAIZ = join(AQUI, '..', '..');
 const HTML = join(AQUI, 'liberdade-economica.html');
 const PDF = join(AQUI, 'liberdade-economica.pdf');
-const APP_URL = 'https://celsoalmeidalf.github.io/liberdade-economica-2026/';
+const APP_URL = 'https://celsoalmeidalf.github.io/liberdade-economica/';
 const EDICAO = 'Outubro de 2026';
 const LOGO = pathToFileURL(join(RAIZ, 'icons', 'icon-512.png')).href;
 
