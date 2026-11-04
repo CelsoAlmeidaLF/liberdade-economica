@@ -1,9 +1,11 @@
-import { IbgeGateway } from './infrastructure/IbgeGateway.js';
-import { ChartAdapter } from './infrastructure/ChartAdapter.js';
-import { CivicPressureService } from './application/CivicPressureService.js';
-import { CivicView } from './ui/CivicView.js';
-import { renderIcons } from './ui/SvgIcons.js';
-import { IPCA_2018 } from './domain/CasosReais.js';
+import { IbgeGateway } from './infrastructure/IbgeGateway.js?v=20261104-1639';
+import { PwaRegistrar } from './infrastructure/PwaRegistrar.js?v=20261104-1639';
+import { criarAtalhoConteudo } from './ui/AtalhoConteudo.js?v=20261104-1639';
+import { ChartAdapter } from './infrastructure/ChartAdapter.js?v=20261104-1639';
+import { CivicPressureService } from './application/CivicPressureService.js?v=20261104-1639';
+import { CivicView } from './ui/CivicView.js?v=20261104-1639';
+import { renderIcons } from './ui/SvgIcons.js?v=20261104-1639';
+import { IPCA_2018 } from './domain/CasosReais.js?v=20261104-1639';
 
 /**
  * Composition Root do app Liberdade Econômica
@@ -15,6 +17,8 @@ export class Program {
 
     // 1. Renderizar Ícones SVG Canônicos
     renderIcons(document);
+    criarAtalhoConteudo(document);
+    new PwaRegistrar().registrar();
 
     // 2. Instanciar Infraestrutura
     const chartAdapter = new ChartAdapter();

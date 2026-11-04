@@ -33,13 +33,11 @@ IPCA mensal de 2018: maio 0,40%, junho 1,26% (maior junho desde 1995), com ~0,48
 Greve geral (1989), petroleiros (1995), bancários (2016), greve geral (2017), caminhoneiros (2018), petroleiros (2020), Correios (2020) e educação federal (2024), com duração, custo quando existe, origem do número, resultado e fontes. Comparação lado a lado e linha do tempo por data ou duração. Quando não há estimativa consolidada de custo, o app informa.
 
 
-Projeto autônomo e desacoplado dedicado à **Modelagem e Simulação de Ação Cívica Não Violenta, Greve de Consumo e Retenção Tributária**, fundamentado nos modelos teóricos de Gene Sharp (*The Politics of Nonviolent Action*) e na pesquisa empírica de Erica Chenoweth e Maria J. Stephan (*Why Civil Resistance Works* - Harvard University Press).
-
-Desenvolvido para operar em arquitetura **Local-First / Zero-Knowledge**, com autonomia total offline, conformidade rigorosa com o **Design System Canônico Systekna** (`financ-ui.css`), tipografia **Space Grotesk** e **IBM Plex Mono**, estética **Glassmorphism 2.0 / Aero 3.0** e **isenção absoluta de emojis em ícones** (100% vetorizado em SVG).
+Funciona no navegador, sem servidor próprio e sem telemetria; instala como app (PWA) e abre sem internet. Os ícones são SVG. O simulador nasceu dos modelos de Gene Sharp (*The Politics of Nonviolent Action*) e da pesquisa de Erica Chenoweth e Maria J. Stephan (*Why Civil Resistance Works*).
 
 ---
 
-## 🏛️ Integrações Governamentais
+## Integrações Governamentais
 
 - **Instituto Brasileiro de Geografia e Estatística (IBGE):**
   - Estimativa oficial de população via SIDRA (tabela 6579, variável 9324). O endpoint antigo `/api/v1/projecoes/populacao` responde 404.
@@ -56,7 +54,7 @@ Desenvolvido para operar em arquitetura **Local-First / Zero-Knowledge**, com au
 
 ---
 
-## 📐 Fundamentação Teórica e Modelos Matemáticos
+## Fundamentação Teórica e Modelos Matemáticos
 
 ### 1. Dinâmica da Retenção de Consumo e Drenagem Fiscal
 $$V_{\text{retido}} = P \cdot G \cdot D \qquad D_{\text{tributos}} = V_{\text{retido}} \cdot \text{TaxRate}$$
@@ -106,15 +104,15 @@ Na pesquisa de Chenoweth e Stephan, campanhas de massa contra governos que mobil
 
 ---
 
-## 🧱 Arquitetura Hexagonal (Ports & Adapters)
+## Arquitetura Hexagonal (Ports & Adapters)
 
 ```
 8. STK-GOVERNO-BRAZIL/8.5. LIBERDADE-ECONOMICA/
 ├── index.html                   # Entrypoint Web semântico e acessível
 ├── css/
-│   ├── fonts.css                # Fontes canônicas locais (Space Grotesk, IBM Plex Mono)
+│   ├── fonts.css                # Fontes locais
 │   ├── liberdade.css            # Estilos próprios do app (setores, fases, cartões)
-│   └── style.css                # Design System Systekna, Glassmorphism 2.0 & Aero 3.0
+│   └── style.css                # Tokens e estilos base (Fluent-Spectrum, cores do Brasil)
 ├── src/
 │   ├── Program.js               # Composition Root & Injeção de Dependências
 │   ├── domain/                  # Lógica pura de negócio e modelos matemáticos
@@ -131,29 +129,32 @@ Na pesquisa de Chenoweth e Stephan, campanhas de massa contra governos que mobil
 │   │   └── CivicPressureService.js # Gestão de simulação e notas técnicas
 │   ├── infrastructure/          # Adapters externos
 │   │   ├── IbgeGateway.js       # Conector REST ao IBGE com fallback seguro
+│   │   ├── PwaRegistrar.js      # Registro do service worker
 │   │   ├── CsvExporter.js       # Exportador CSV RFC 4180 UTF-8 BOM
 │   │   └── ChartAdapter.js      # Gráficos Chart.js 4.4.1 (Evolução + Rosca setorial)
 │   └── ui/                      # Camada de apresentação e interface
 │       ├── SvgIcons.js          # Ícones vetorizados Lucide / FinancIcons
+│       ├── AtalhoConteudo.js    # "Pular para o conteúdo"
 │       └── CivicView.js         # Controle reativo do DOM e eventos
 ├── vendor/
 │   ├── chart.js/chart.umd.js    # Chart.js 4.4.1 vendored localmente
-│   └── fonts/                   # Arquivos .woff2 de Space Grotesk e IBM Plex Mono
+│   └── fonts/                   # Arquivos .woff2
+├── scripts/versionar.mjs        # Carimba a versão nos arquivos e no sw.js
+├── sw.js                        # Service worker (lista e versão geradas)
 └── tests/
-    └── test_civic_models.js     # 121 testes unitários automatizados
+    ├── test_civic_models.js     # Testes de domínio e infraestrutura
+    └── test_ui_smoke.mjs        # Teste da tela num Chrome headless
 ```
 
 ---
 
-## 🚀 Execução e Testes
+## Execução e Testes
 
-### Execução dos Testes Unitários
 ```bash
-node tests/test_civic_models.js
+python3 -m http.server 8282   # abrir em http://localhost:8282
+npm test                      # regras e infraestrutura
+npm run test:ui               # tela, num Chrome headless (sem Chrome, é pulado)
+npm run versionar             # depois de mudar qualquer arquivo da página
 ```
 
-### Visualização no Navegador
-```bash
-python3 -m http.server 8282
-```
-Acesse `http://localhost:8282`.
+Depois de mudar CSS ou JS, rode `npm run versionar`: sem isso o navegador pode misturar arquivos novos com antigos do cache.

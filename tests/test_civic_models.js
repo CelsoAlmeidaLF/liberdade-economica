@@ -11,6 +11,7 @@ import { GreveProducaoModel } from '../src/domain/GreveProducaoModel.js';
 import { DivisaoCusto } from '../src/domain/DivisaoCusto.js';
 import { PIB_REFERENCIA, OTICA_RENDA } from '../src/domain/ArrecadacaoReferencia.js';
 import { DIREITOS } from '../src/domain/DireitosGreve.js';
+import { PwaRegistrar } from '../src/infrastructure/PwaRegistrar.js';
 
 let passed = 0;
 let failed = 0;
@@ -266,6 +267,14 @@ sv.selecionarTipo('geral');
 assert(sv.generateExecutiveReport().includes('Toda a economia') && sv.generateExecutiveReport().includes('QUEM PAGA A CONTA'), 'Nota técnica da greve geral com divisão do custo');
 sv.selecionarTipo('consumo');
 assert(sv.calculateSimulation().modo === 'consumo' && sv.state.setor === 'geral', 'Volta ao consumo mantendo o setor do boicote');
+
+const swPedidos = [];
+const navFalso = { serviceWorker: { register: async url => { swPedidos.push(url); } } };
+assert(await new PwaRegistrar({ nav: navFalso, seguro: true }).registrar() === true && swPedidos[0] === 'sw.js', 'Registra o service worker em contexto seguro');
+assert(await new PwaRegistrar({ nav: navFalso, seguro: false }).registrar() === false && swPedidos.length === 1, 'Não registra fora de HTTPS');
+assert(await new PwaRegistrar({ nav: {}, seguro: true }).registrar() === false, 'Navegador sem service worker segue sem erro');
+const navComFalha = { serviceWorker: { register: async () => { throw new Error('falhou'); } } };
+assert(await new PwaRegistrar({ nav: navComFalha, seguro: true }).registrar() === false, 'Falha no registro não derruba o app');
 
 console.log(`\n========================================`);
 console.log(`Total: ${passed + failed} | Passou: ${passed} | Falhou: ${failed}`);

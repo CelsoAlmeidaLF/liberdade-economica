@@ -1,0 +1,11 @@
+{
+  "name": "stk-governo-liberdade-economica",
+  "private": true,
+  "description": "Liberdade Econômica (8.5. LIBERDADE-ECONOMICA): impacto econômico das greves, sem dependências npm",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/test_civic_models.js",
+    "test:ui": "node --experimental-websocket tests/test_ui_smoke.mjs",
+    "versionar": "node scripts/versionar.mjs"
+  }
+}

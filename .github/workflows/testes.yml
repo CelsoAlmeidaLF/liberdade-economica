@@ -1,0 +1,29 @@
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm test
+      - name: Mudança na página exige nova versão no sw.js
+        if: github.event_name == 'push'
+        env:
+          ANTES: ${{ github.event.before }}
+        run: |
+          git cat-file -e "$ANTES" 2>/dev/null || exit 0
+          mudou=$(git diff --name-only "$ANTES" "$GITHUB_SHA")
+          if echo "$mudou" | grep -qE '^(index\.html|css/|src/|vendor/)' && ! echo "$mudou" | grep -qx 'sw.js'; then
+            echo "::error::Arquivos da página mudaram sem npm run versionar"
+            exit 1
+          fi
