@@ -3,7 +3,7 @@
  * Fundamentação: Gene Sharp (The Politics of Nonviolent Action) e
  * Erica Chenoweth & Maria J. Stephan (Why Civil Resistance Works - Harvard University Press).
  */
-import { ARRECADACAO_REFERENCIA, classificarFase } from './ArrecadacaoReferencia.js?v=20261104-1710';
+import { ARRECADACAO_REFERENCIA, classificarFase } from './ArrecadacaoReferencia.js?v=20261104-1745';
 
 export class CivicPressureModel {
   /**

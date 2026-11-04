@@ -1,11 +1,11 @@
-import { IbgeGateway } from './infrastructure/IbgeGateway.js?v=20261104-1710';
-import { StkGovShell, renderStkIcons } from '../vendor/stk-gov/stk-gov-shell.js?v=20261104-1710';
-import { StkGovPwa } from '../vendor/stk-gov/stk-gov-pwa.js?v=20261104-1710';
-import { ChartAdapter } from './infrastructure/ChartAdapter.js?v=20261104-1710';
-import { CivicPressureService } from './application/CivicPressureService.js?v=20261104-1710';
-import { CivicView } from './ui/CivicView.js?v=20261104-1710';
-import { renderIcons } from './ui/SvgIcons.js?v=20261104-1710';
-import { IPCA_2018 } from './domain/CasosReais.js?v=20261104-1710';
+import { IbgeGateway } from './infrastructure/IbgeGateway.js?v=20261104-1745';
+import { StkGovShell, renderStkIcons } from '../vendor/stk-gov/stk-gov-shell.js?v=20261104-1745';
+import { StkGovPwa } from '../vendor/stk-gov/stk-gov-pwa.js?v=20261104-1745';
+import { ChartAdapter } from './infrastructure/ChartAdapter.js?v=20261104-1745';
+import { CivicPressureService } from './application/CivicPressureService.js?v=20261104-1745';
+import { CivicView } from './ui/CivicView.js?v=20261104-1745';
+import { renderIcons } from './ui/SvgIcons.js?v=20261104-1745';
+import { IPCA_2018 } from './domain/CasosReais.js?v=20261104-1745';
 
 /**
  * Composition Root do app Liberdade Econômica

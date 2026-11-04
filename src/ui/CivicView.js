@@ -1,11 +1,11 @@
-import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261104-1710';
-import { SETORES } from '../domain/SetorConsumo.js?v=20261104-1710';
-import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261104-1710';
-import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261104-1710';
-import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261104-1710';
-import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261104-1710';
-import { SvgIcons } from './SvgIcons.js?v=20261104-1710';
-import { CenarioUrl } from './CenarioUrl.js?v=20261104-1710';
+import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261104-1745';
+import { SETORES } from '../domain/SetorConsumo.js?v=20261104-1745';
+import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261104-1745';
+import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261104-1745';
+import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261104-1745';
+import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261104-1745';
+import { SvgIcons } from './SvgIcons.js?v=20261104-1745';
+import { CenarioUrl } from './CenarioUrl.js?v=20261104-1745';
 
 const brl = CivicPressureModel.formatBRL;
 const pct = (v, casas = 2) => `${Number(v).toFixed(casas).replace('.', ',')}%`;
