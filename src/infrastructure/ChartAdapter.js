@@ -1,3 +1,5 @@
+import { coresDoTema } from '../../vendor/stk-gov/stk-gov-config.js?v=20261119-1122';
+
 /**
  * Camada de Infraestrutura: ChartAdapter
  * Adaptador visual de gráficos para a Liberdade Econômica.
@@ -13,6 +15,7 @@ export class ChartAdapter {
    */
   initEvolutionChart(canvasEl) {
     if (!canvasEl || typeof Chart === 'undefined') return;
+    const t = coresDoTema();
     if (this.evolutionChart) this.evolutionChart.destroy();
 
     const ctx = canvasEl.getContext('2d');
@@ -24,22 +27,22 @@ export class ChartAdapter {
           {
             label: 'Gasto que deixou de circular',
             data: [100, 700, 1750],
-            borderColor: '#FFD43B', // gold
-            backgroundColor: 'rgba(255, 212, 59, 0.08)',
+            borderColor: t.amarelo, // gold
+            backgroundColor: t.alfa(t.amarelo, 0.08),
             fill: true,
             tension: 0.35,
-            pointBackgroundColor: '#FFD43B',
+            pointBackgroundColor: t.amarelo,
             pointRadius: 4,
             pointHoverRadius: 6
           },
           {
             label: 'Imposto que não entrou',
             data: [34, 238, 595],
-            borderColor: '#F1707B', // down
-            backgroundColor: 'rgba(241, 112, 123, 0.12)',
+            borderColor: t.vermelho, // down
+            backgroundColor: t.alfa(t.vermelho, 0.12),
             fill: true,
             tension: 0.35,
-            pointBackgroundColor: '#F1707B',
+            pointBackgroundColor: t.vermelho,
             pointRadius: 4,
             pointHoverRadius: 6
           }
@@ -51,7 +54,7 @@ export class ChartAdapter {
         plugins: {
           legend: {
             labels: {
-              color: '#D6D6D6',
+              color: t.texto,
               font: { family: 'Inter', size: 10 },
               filter: (item, data) => !data.datasets[item.datasetIndex].hidden
             }
@@ -73,19 +76,19 @@ export class ChartAdapter {
         },
         scales: {
           x: {
-            ticks: { color: '#ADADAD', font: { family: 'Inter', size: 10 } },
+            ticks: { color: t.eixo, font: { family: 'Inter', size: 10 } },
             grid: { display: false }
           },
           y: {
             ticks: {
-              color: '#ADADAD',
+              color: t.eixo,
               font: { family: 'Inter', size: 9 },
               callback: v => {
                 if (v >= 1e9) return `R$ ${(v / 1e9).toFixed(1)}B`;
                 return `R$ ${(v / 1e6).toFixed(0)}M`;
               }
             },
-            grid: { color: '#333333' }
+            grid: { color: t.grade }
           }
         }
       }
@@ -105,6 +108,7 @@ export class ChartAdapter {
    */
   initBreakdownChart(canvasEl) {
     if (!canvasEl || typeof Chart === 'undefined') return;
+    const t = coresDoTema();
     if (this.breakdownChart) this.breakdownChart.destroy();
 
     const ctx = canvasEl.getContext('2d');
@@ -120,12 +124,12 @@ export class ChartAdapter {
         datasets: [{
           data: [58, 28, 8, 6],
           backgroundColor: [
-            '#3DD68C', // accent (Estados)
-            '#6C9CFF', // info (União PIS/COFINS)
-            '#FFD43B', // gold (União IPI)
-            '#B794F6'  // purple (Municípios ISS)
+            t.verde, // accent (Estados)
+            t.azul, // info (União PIS/COFINS)
+            t.amarelo, // gold (União IPI)
+            t.roxo  // purple (Municípios ISS)
           ],
-          borderColor: '#1F1F1F',
+          borderColor: t.superficie,
           borderWidth: 3,
           hoverOffset: 6
         }]
@@ -137,7 +141,7 @@ export class ChartAdapter {
           legend: {
             position: window.matchMedia('(max-width: 639px)').matches ? 'bottom' : 'right',
             labels: {
-              color: '#D6D6D6',
+              color: t.texto,
               font: { family: 'Inter', size: 10 },
               boxWidth: 12,
               padding: 10
@@ -197,12 +201,13 @@ export class ChartAdapter {
    */
   initPrecosChart(canvasEl, { meses, valores, mesGreve, mesPico }) {
     if (!canvasEl || typeof Chart === 'undefined') return;
+    const t = coresDoTema();
     if (this.precosChart) this.precosChart.destroy();
 
     const cores = valores.map((_, i) => {
-      if (i === mesPico) return '#F1707B';
-      if (i === mesGreve) return '#FFD43B';
-      return 'rgba(108, 156, 255, 0.55)';
+      if (i === mesPico) return t.vermelho;
+      if (i === mesGreve) return t.amarelo;
+      return t.alfa(t.azul, 0.55);
     });
 
     this.precosChart = new Chart(canvasEl.getContext('2d'), {
@@ -234,10 +239,10 @@ export class ChartAdapter {
           }
         },
         scales: {
-          x: { ticks: { color: '#A0A0A0', font: { family: 'Inter', size: 10 } }, grid: { display: false } },
+          x: { ticks: { color: t.eixo, font: { family: 'Inter', size: 10 } }, grid: { display: false } },
           y: {
-            ticks: { color: '#A0A0A0', font: { family: 'Inter', size: 10 }, callback: v => `${String(v).replace('.', ',')}%` },
-            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+            ticks: { color: t.eixo, font: { family: 'Inter', size: 10 }, callback: v => `${String(v).replace('.', ',')}%` },
+            grid: { color: t.gradeSuave }
           }
         }
       }

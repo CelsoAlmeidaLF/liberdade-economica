@@ -15,6 +15,10 @@ No computador as abas ficam no topo; no celular, na barra de baixo junto com IBG
 
 **Compartilhar** copia um link com o cenário e a aba atuais (`CenarioUrl.js`), por exemplo `index.html#tipo=transporte&setor=carga&adesao=80&dias=11`. Quem abre vê os mesmos valores. Os links antigos, como `#greves`, continuam valendo.
 
+## Configurações
+
+A engrenagem do topo abre o painel comum: tema (escuro, claro ou do sistema), o que está guardado neste navegador, com opção de apagar, e a busca por versão nova.
+
 ## Tipos de greve (`TiposGreve.js`, `GreveProducaoModel.js`)
 
 | Tipo | Como o impacto é calculado |

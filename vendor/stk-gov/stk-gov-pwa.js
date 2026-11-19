@@ -64,6 +64,30 @@ export class StkGovPwa {
     botao.addEventListener('click', () => this.install());
   }
 
+  /**
+   * Procura uma versão nova do app no servidor. Com versão nova, o service worker assume sozinho
+   * (skipWaiting) e esta função resolve depois disso: quem chamou recarrega a página.
+   * @returns {Promise<'atualizado'|'em-dia'|'sem-rede'|'indisponivel'>}
+   */
+  async procurarAtualizacao() {
+    if (!('serviceWorker' in navigator)) return 'indisponivel';
+    const registro = await navigator.serviceWorker.getRegistration();
+    if (!registro) return 'indisponivel';
+    try {
+      await registro.update();
+    } catch {
+      return 'sem-rede';
+    }
+    const novo = registro.installing || registro.waiting;
+    if (!novo) return 'em-dia';
+    await new Promise(pronto => {
+      novo.addEventListener('statechange', () => {
+        if (novo.state === 'activated' || novo.state === 'redundant') pronto();
+      });
+    });
+    return novo.state === 'activated' ? 'atualizado' : 'em-dia';
+  }
+
   _notify() {
     this._listeners.forEach(cb => cb(this.canInstall()));
   }

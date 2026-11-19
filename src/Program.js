@@ -1,11 +1,12 @@
-import { IbgeGateway } from './infrastructure/IbgeGateway.js?v=20261104-1745';
-import { StkGovShell, renderStkIcons } from '../vendor/stk-gov/stk-gov-shell.js?v=20261104-1745';
-import { StkGovPwa } from '../vendor/stk-gov/stk-gov-pwa.js?v=20261104-1745';
-import { ChartAdapter } from './infrastructure/ChartAdapter.js?v=20261104-1745';
-import { CivicPressureService } from './application/CivicPressureService.js?v=20261104-1745';
-import { CivicView } from './ui/CivicView.js?v=20261104-1745';
-import { renderIcons } from './ui/SvgIcons.js?v=20261104-1745';
-import { IPCA_2018 } from './domain/CasosReais.js?v=20261104-1745';
+import { IbgeGateway } from './infrastructure/IbgeGateway.js?v=20261119-1122';
+import { StkGovShell, renderStkIcons } from '../vendor/stk-gov/stk-gov-shell.js?v=20261119-1122';
+import { StkGovPwa } from '../vendor/stk-gov/stk-gov-pwa.js?v=20261119-1122';
+import { StkGovConfig } from '../vendor/stk-gov/stk-gov-config.js?v=20261119-1122';
+import { ChartAdapter } from './infrastructure/ChartAdapter.js?v=20261119-1122';
+import { CivicPressureService } from './application/CivicPressureService.js?v=20261119-1122';
+import { CivicView } from './ui/CivicView.js?v=20261119-1122';
+import { renderIcons } from './ui/SvgIcons.js?v=20261119-1122';
+import { IPCA_2018 } from './domain/CasosReais.js?v=20261119-1122';
 
 /**
  * Composition Root do app Liberdade Econômica
@@ -30,6 +31,8 @@ export class Program {
     pwa.init();
     pwa.ligarBotao(document.getElementById('btnInstallApp'));
 
+    new StkGovConfig({ app: 'liberdade-economica', nome: 'Liberdade Econômica', pwa }).iniciar();
+
     // 2. Instanciar Infraestrutura
     const chartAdapter = new ChartAdapter();
     const ibgeGateway = new IbgeGateway({
@@ -48,14 +51,21 @@ export class Program {
       chartAdapter
     });
 
-    // 5. Inicializar Gráficos Chart.js
-    const canvasEvolution = document.getElementById('chartEvolution');
-    const canvasBreakdown = document.getElementById('chartBreakdown');
+    // 5. Inicializar Gráficos Chart.js (de novo a cada troca de tema: as cores ficam dentro do canvas)
+    const iniciarGraficos = () => {
+      const canvasEvolution = document.getElementById('chartEvolution');
+      const canvasBreakdown = document.getElementById('chartBreakdown');
 
-    if (canvasEvolution) chartAdapter.initEvolutionChart(canvasEvolution);
-    if (canvasBreakdown) chartAdapter.initBreakdownChart(canvasBreakdown);
-    const canvasPrecos = document.getElementById('chartPrecos');
-    if (canvasPrecos) chartAdapter.initPrecosChart(canvasPrecos, IPCA_2018);
+      if (canvasEvolution) chartAdapter.initEvolutionChart(canvasEvolution);
+      if (canvasBreakdown) chartAdapter.initBreakdownChart(canvasBreakdown);
+      const canvasPrecos = document.getElementById('chartPrecos');
+      if (canvasPrecos) chartAdapter.initPrecosChart(canvasPrecos, IPCA_2018);
+    };
+    iniciarGraficos();
+    document.addEventListener('stk:tema', () => {
+      iniciarGraficos();
+      viewInstance.render();
+    });
 
     // 6. Renderização Inicial
     viewInstance.render();

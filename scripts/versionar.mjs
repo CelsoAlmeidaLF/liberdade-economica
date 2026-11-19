@@ -20,7 +20,7 @@ const comVersao = caminho => `${caminho.replace(/\?v=[^'"]*$/, '')}?v=${versao}`
 const indexPath = join(raiz, 'index.html');
 const index = readFileSync(indexPath, 'utf8')
   .replace(/(href="((?:css|vendor)\/[^"]+\.css)(?:\?v=[^"]*)?")/g, (_, __, p) => `href="${comVersao(p)}"`)
-  .replace(/(src="(src\/[^"]+\.js)(?:\?v=[^"]*)?")/g, (_, __, p) => `src="${comVersao(p)}"`);
+  .replace(/(src="((?:src|vendor\/stk-gov)\/[^"]+\.js)(?:\?v=[^"]*)?")/g, (_, __, p) => `src="${comVersao(p)}"`);
 writeFileSync(indexPath, index);
 
 // src/**: imports e exports relativos
@@ -49,7 +49,7 @@ for (const p of arquivos) {
 }
 const fontes = join(raiz, 'vendor', 'fonts');
 for (const nome of readdirSync(fontes)) if (nome.endsWith('.woff2')) shell.push(`vendor/fonts/${nome}`);
-shell.push(`vendor/stk-gov/stk-gov-shell.js?v=${versao}`, `vendor/stk-gov/stk-gov-pwa.js?v=${versao}`, 'icons/icon-512.png', 'icons/icon-maskable-512.png');
+shell.push(`vendor/stk-gov/stk-gov-shell.js?v=${versao}`, `vendor/stk-gov/stk-gov-pwa.js?v=${versao}`, `vendor/stk-gov/stk-gov-config.js?v=${versao}`, 'icons/icon-512.png', 'icons/icon-maskable-512.png');
 const unicos = [...new Set(shell)];
 const swPath = join(raiz, 'sw.js');
 const sw = readFileSync(swPath, 'utf8').replace(/\/\/ <versionar>[\s\S]*?\/\/ <\/versionar>/,

@@ -21,10 +21,11 @@
   <meta property="og:type" content="website">
 
   <!-- Design system comum dos projetos 8.X (cópia de _design-system/, não editar aqui) + estilos do conteúdo -->
-  <link rel="stylesheet" href="css/fonts.css?v=20261104-1745">
-  <link rel="stylesheet" href="vendor/stk-gov/stk-gov.css?v=20261104-1745">
-  <link rel="stylesheet" href="css/style.css?v=20261104-1745">
-  <link rel="stylesheet" href="css/liberdade.css?v=20261104-1745">
+  <script src="vendor/stk-gov/stk-gov-tema.js?v=20261119-1122" data-app="liberdade-economica"></script>
+  <link rel="stylesheet" href="css/fonts.css?v=20261119-1122">
+  <link rel="stylesheet" href="vendor/stk-gov/stk-gov.css?v=20261119-1122">
+  <link rel="stylesheet" href="css/style.css?v=20261119-1122">
+  <link rel="stylesheet" href="css/liberdade.css?v=20261119-1122">
   
   <!-- Biblioteca Vendored Local-First para Gráficos -->
   <script src="vendor/chart.js/chart.umd.js"></script>
@@ -65,7 +66,7 @@
             </button>
             <div class="action-menu-list" role="menu">
               <button type="button" class="action-menu-item" role="menuitem" id="btnShareCenario"><span data-stk-icon="copy"></span><span class="action-btn-label">Copiar link</span></button>
-              <button type="button" class="action-menu-item" role="menuitem" data-action="share-whatsapp"><span data-stk-icon="whatsapp"></span>WhatsApp</button>
+              <button type="button" class="action-menu-item" role="menuitem" data-action="copy-report"><span data-stk-icon="copy"></span>Copiar resumo</button>
             </div>
           </div>
         </div>
@@ -664,6 +665,6 @@
   </div>
 
   <!-- ENTRYPOINT DA APLICAÇÃO (ES6 MODULE) -->
-  <script type="module" src="src/Program.js?v=20261104-1745"></script>
+  <script type="module" src="src/Program.js?v=20261119-1122"></script>
 </body>
 </html>
