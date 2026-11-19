@@ -1,4 +1,4 @@
-import { coresDoTema } from '../../vendor/stk-gov/stk-gov-config.js?v=20261119-1256';
+import { coresDoTema } from '../../vendor/stk-gov/stk-gov-config.js?v=20261119-1404';
 
 /**
  * Camada de Infraestrutura: ChartAdapter

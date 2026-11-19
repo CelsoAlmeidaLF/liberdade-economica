@@ -1,14 +1,14 @@
-import { CivicState } from '../domain/CivicState.js?v=20261119-1256';
-import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261119-1256';
-import { SectorDrainageModel } from '../domain/SectorDrainageModel.js?v=20261119-1256';
-import { GreveProducaoModel } from '../domain/GreveProducaoModel.js?v=20261119-1256';
-import { DivisaoCusto } from '../domain/DivisaoCusto.js?v=20261119-1256';
-import { obterSetor } from '../domain/SetorConsumo.js?v=20261119-1256';
-import { obterTipo, obterSetorProducao, obterOrgao } from '../domain/TiposGreve.js?v=20261119-1256';
-import { ARRECADACAO_REFERENCIA, PIB_REFERENCIA, OTICA_RENDA, classificarFase } from '../domain/ArrecadacaoReferencia.js?v=20261119-1256';
-import { GREVE_CAMINHONEIROS_2018, compararComGreve } from '../domain/CasosReais.js?v=20261119-1256';
-import { CsvExporter } from '../infrastructure/CsvExporter.js?v=20261119-1256';
-import { ParametrosVendor } from '../infrastructure/ParametrosVendor.js?v=20261119-1256';
+import { CivicState } from '../domain/CivicState.js?v=20261119-1404';
+import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261119-1404';
+import { SectorDrainageModel } from '../domain/SectorDrainageModel.js?v=20261119-1404';
+import { GreveProducaoModel } from '../domain/GreveProducaoModel.js?v=20261119-1404';
+import { DivisaoCusto } from '../domain/DivisaoCusto.js?v=20261119-1404';
+import { obterSetor } from '../domain/SetorConsumo.js?v=20261119-1404';
+import { obterTipo, obterSetorProducao, obterOrgao } from '../domain/TiposGreve.js?v=20261119-1404';
+import { ARRECADACAO_REFERENCIA, PIB_REFERENCIA, OTICA_RENDA, classificarFase } from '../domain/ArrecadacaoReferencia.js?v=20261119-1404';
+import { GREVE_CAMINHONEIROS_2018, compararComGreve } from '../domain/CasosReais.js?v=20261119-1404';
+import { CsvExporter } from '../infrastructure/CsvExporter.js?v=20261119-1404';
+import { ParametrosVendor } from '../infrastructure/ParametrosVendor.js?v=20261119-1404';
 
 /**
  * Camada de Aplicação: CivicPressureService
@@ -19,7 +19,7 @@ export class CivicPressureService {
    * @param {Object} [dependencies]
    * @param {Object} [dependencies.ibgeGateway]
    * @param {Object} [dependencies.initialState]
-   * @param {import('../infrastructure/ParametrosVendor.js?v=20261119-1256').ParametrosVendor} [dependencies.parametros] ParametrosPort (módulo comum, ADR-001)
+   * @param {import('../infrastructure/ParametrosVendor.js?v=20261119-1404').ParametrosVendor} [dependencies.parametros] ParametrosPort (módulo comum, ADR-001)
    */
   constructor({ ibgeGateway, initialState = null, parametros = new ParametrosVendor() } = {}) {
     this.ibgeGateway = ibgeGateway;
