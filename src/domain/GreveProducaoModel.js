@@ -2,7 +2,7 @@
  * Camada de Domínio: GreveProducaoModel
  * Impacto de greves que param a produção (transporte, geral, categoria) e do setor público.
  */
-import { PIB_REFERENCIA, OTICA_RENDA } from './ArrecadacaoReferencia.js?v=20261104-1745';
+import { PIB_REFERENCIA, OTICA_RENDA } from './ArrecadacaoReferencia.js?v=20261119-1122';
 
 export class GreveProducaoModel {
   /**

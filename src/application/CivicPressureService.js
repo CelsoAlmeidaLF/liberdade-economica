@@ -1,13 +1,13 @@
-import { CivicState } from '../domain/CivicState.js?v=20261104-1745';
-import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261104-1745';
-import { SectorDrainageModel } from '../domain/SectorDrainageModel.js?v=20261104-1745';
-import { GreveProducaoModel } from '../domain/GreveProducaoModel.js?v=20261104-1745';
-import { DivisaoCusto } from '../domain/DivisaoCusto.js?v=20261104-1745';
-import { obterSetor } from '../domain/SetorConsumo.js?v=20261104-1745';
-import { obterTipo, obterSetorProducao, obterOrgao } from '../domain/TiposGreve.js?v=20261104-1745';
-import { ARRECADACAO_REFERENCIA, PIB_REFERENCIA, OTICA_RENDA, classificarFase } from '../domain/ArrecadacaoReferencia.js?v=20261104-1745';
-import { GREVE_CAMINHONEIROS_2018, compararComGreve } from '../domain/CasosReais.js?v=20261104-1745';
-import { CsvExporter } from '../infrastructure/CsvExporter.js?v=20261104-1745';
+import { CivicState } from '../domain/CivicState.js?v=20261119-1122';
+import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261119-1122';
+import { SectorDrainageModel } from '../domain/SectorDrainageModel.js?v=20261119-1122';
+import { GreveProducaoModel } from '../domain/GreveProducaoModel.js?v=20261119-1122';
+import { DivisaoCusto } from '../domain/DivisaoCusto.js?v=20261119-1122';
+import { obterSetor } from '../domain/SetorConsumo.js?v=20261119-1122';
+import { obterTipo, obterSetorProducao, obterOrgao } from '../domain/TiposGreve.js?v=20261119-1122';
+import { ARRECADACAO_REFERENCIA, PIB_REFERENCIA, OTICA_RENDA, classificarFase } from '../domain/ArrecadacaoReferencia.js?v=20261119-1122';
+import { GREVE_CAMINHONEIROS_2018, compararComGreve } from '../domain/CasosReais.js?v=20261119-1122';
+import { CsvExporter } from '../infrastructure/CsvExporter.js?v=20261119-1122';
 
 /**
  * Camada de Aplicação: CivicPressureService
