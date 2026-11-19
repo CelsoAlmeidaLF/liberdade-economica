@@ -1,0 +1,69 @@
+{
+  "descricao": "Casos da escolha de vigência por data. Rodam no Node (tests/parametros.test.mjs) e no Python (início de 8.6/scripts/build_data.py). Datas ISO, intervalo fechado nas duas pontas; vigenteAte null = em vigor; esperado null = sem vigência.",
+  "casos": [
+    {
+      "nome": "dentro do intervalo",
+      "vigencias": [
+        { "valor": 1412, "vigenteDesde": "2024-01-01", "vigenteAte": "2024-12-31" },
+        { "valor": 1518, "vigenteDesde": "2025-01-01", "vigenteAte": "2025-12-31" },
+        { "valor": 1621, "vigenteDesde": "2026-01-01", "vigenteAte": null }
+      ],
+      "data": "2025-06-15",
+      "esperado": 1518
+    },
+    {
+      "nome": "primeiro dia da vigência é incluído",
+      "vigencias": [
+        { "valor": 1518, "vigenteDesde": "2025-01-01", "vigenteAte": "2025-12-31" },
+        { "valor": 1621, "vigenteDesde": "2026-01-01", "vigenteAte": null }
+      ],
+      "data": "2026-01-01",
+      "esperado": 1621
+    },
+    {
+      "nome": "último dia da vigência é incluído",
+      "vigencias": [
+        { "valor": 1518, "vigenteDesde": "2025-01-01", "vigenteAte": "2025-12-31" },
+        { "valor": 1621, "vigenteDesde": "2026-01-01", "vigenteAte": null }
+      ],
+      "data": "2025-12-31",
+      "esperado": 1518
+    },
+    {
+      "nome": "vigenteAte null vale para qualquer data futura",
+      "vigencias": [{ "valor": 1621, "vigenteDesde": "2026-01-01", "vigenteAte": null }],
+      "data": "2099-12-31",
+      "esperado": 1621
+    },
+    {
+      "nome": "antes da primeira vigência não há valor",
+      "vigencias": [{ "valor": 1621, "vigenteDesde": "2026-01-01", "vigenteAte": null }],
+      "data": "2025-12-31",
+      "esperado": null
+    },
+    {
+      "nome": "lacuna entre vigências não há valor",
+      "vigencias": [
+        { "valor": 10, "vigenteDesde": "2020-01-01", "vigenteAte": "2020-12-31" },
+        { "valor": 20, "vigenteDesde": "2022-01-01", "vigenteAte": null }
+      ],
+      "data": "2021-06-01",
+      "esperado": null
+    },
+    {
+      "nome": "vigências fora de ordem no arquivo",
+      "vigencias": [
+        { "valor": 20, "vigenteDesde": "2022-01-01", "vigenteAte": null },
+        { "valor": 10, "vigenteDesde": "2020-01-01", "vigenteAte": "2021-12-31" }
+      ],
+      "data": "2021-03-01",
+      "esperado": 10
+    },
+    {
+      "nome": "vigência de um dia só",
+      "vigencias": [{ "valor": 7, "vigenteDesde": "2026-03-10", "vigenteAte": "2026-03-10" }],
+      "data": "2026-03-10",
+      "esperado": 7
+    }
+  ]
+}

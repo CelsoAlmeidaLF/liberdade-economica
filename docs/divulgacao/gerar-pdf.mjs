@@ -144,7 +144,7 @@ const metodo = () => {
   <p>Na greve de consumo, o governo perde o imposto e o consumidor guarda o dinheiro. No setor público, quem perde é a população, que fica sem o serviço.</p>
 
   <h3>Peso na arrecadação</h3>
-  <p>Referência: arrecadação anual de ${reais(ARRECADACAO_REFERENCIA.anual)} (carga tributária de 32,3% do PIB em 2024). O app classifica a perda em quatro faixas de leitura:</p>
+  <p>Referência: arrecadação anual de ${reais(ARRECADACAO_REFERENCIA.anual)} (carga tributária de 32,22% do PIB em 2024). O app classifica a perda em quatro faixas de leitura:</p>
   <table class="tabela compacta"><tbody>
     ${FASES_FISCAIS.map((f, i) => `<tr><td class="mono">${i === 0 ? 'até' : ''} ${f.limite === Infinity ? `acima de ${num(FASES_FISCAIS[i - 1].limite, 0)}%` : `${num(f.limite, f.limite < 1 ? 2 : 0)}%`}</td><td><b>${esc(f.titulo)}</b><br>${esc(f.desc)}</td></tr>`).join('')}
   </tbody></table>

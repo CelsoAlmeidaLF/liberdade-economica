@@ -12,6 +12,7 @@ import { DivisaoCusto } from '../src/domain/DivisaoCusto.js';
 import { PIB_REFERENCIA, OTICA_RENDA } from '../src/domain/ArrecadacaoReferencia.js';
 import { DIREITOS } from '../src/domain/DireitosGreve.js';
 import { CenarioUrl } from '../src/ui/CenarioUrl.js';
+import { ParametrosVendor } from '../src/infrastructure/ParametrosVendor.js';
 
 let passed = 0;
 let failed = 0;
@@ -333,6 +334,31 @@ assert(soValidos === `${BASE_URL}#adiado=0`, 'Monta só os valores válidos info
 assert(CenarioUrl.montar(`${BASE_URL}#greves`, {}) === BASE_URL && CenarioUrl.montar(BASE_URL) === BASE_URL, 'Sem valores válidos não sobra # no link');
 assert(CenarioUrl.montar(BASE_URL, { taxRatio: 21.800000000000001 }) === `${BASE_URL}#tributo=21.8`, 'Número vai no link com até duas casas');
 assert(CenarioUrl.montar(BASE_URL, { setor: 'carga&dias=999' }) === `${BASE_URL}#setor=cargadias999`, 'Texto não injeta outro parâmetro no link');
+
+// Parâmetros comuns (ADR-001): carga tributária e PIB de 2024 vêm do módulo comum, os mesmos da 8.3
+console.log('\nParâmetros comuns: carga tributária bruta e PIB de 2024');
+const parametros = new ParametrosVendor();
+assert(parametros.valor('carga_tributaria_bruta_gg') === 32.22, 'Carga tributária bruta 2024 do módulo comum = 32,22% (Tesouro, Boletim CTB 2025), não mais a prévia de 32,32%');
+assert(parametros.valor('pib_nominal_anual') === 11.779251, 'PIB de 2024 do módulo comum = R$ 11,779251 tri (IBGE, SIDRA 6784), não os R$ 11,7 tri arredondados');
+assert(parametros.vigencia('carga_tributaria_bruta_gg').status === 'confirmado' && parametros.vigencia('pib_nominal_anual').fonte.url.includes('ibge.gov.br'), 'Os dois estão confirmados e o PIB cita o IBGE, não matéria de jornal');
+assertCloseTo(ARRECADACAO_REFERENCIA.anual, parametros.valor('pib_nominal_anual') * 1e12 * parametros.valor('carga_tributaria_bruta_gg') / 100, 1, 'Constante do domínio (ARRECADACAO_REFERENCIA) = parâmetros');
+assertCloseTo(PIB_REFERENCIA.anual, parametros.valor('pib_nominal_anual') * 1e12, 1, 'Constante do domínio (PIB_REFERENCIA) = parâmetros');
+const refsServico = new CivicPressureService().referencias;
+assertCloseTo(refsServico.arrecadacaoAnual, ARRECADACAO_REFERENCIA.anual, 1, 'O serviço lê a arrecadação do módulo comum (≈ R$ 3,80 tri)');
+assert(refsServico.fonteArrecadacao.includes('32,22%') && refsServico.fonteArrecadacao.includes('11,78 tri') && refsServico.fontePib.includes('11,78 tri'), 'Texto da fonte mostra os números do parâmetro (32,22% e R$ 11,78 tri)');
+const paramFalso = { valor: id => ({ carga_tributaria_bruta_gg: 20, pib_nominal_anual: 10 })[id], insumo: () => ({}), selo: () => 'exato' };
+const svFalso = new CivicPressureService({ parametros: paramFalso });
+assertCloseTo(svFalso.referencias.arrecadacaoAnual, 2e12, 1, 'Serviço usa o parâmetro injetado (20% de R$ 10 tri = R$ 2 tri)');
+const simFalso = svFalso.calculateSimulation();
+assertCloseTo(simFalso.resumo.arrecadacaoPeriodo, 2e12 / 365 * svFalso.state.dias, 1, 'Arrecadação do período da simulação segue o parâmetro injetado');
+const prod = new CivicPressureService({ parametros: paramFalso });
+prod.state = prod.state.with({ tipoGreve: 'geral', dias: 1, adesaoPct: 100, usarCascata: false });
+const simProd = prod.calculateSimulation();
+assert(simProd.modo === 'producao' && Math.abs(simProd.producao.perdaBruta - (10e12 / 365) * simProd.setorProducao.pesoPib / 100) < 1, 'Greve de produção usa o PIB do parâmetro injetado (R$ 10 tri / 365 × peso)');
+const semVigencia = new CivicPressureService({ parametros: { valor: () => undefined } });
+assert(semVigencia.referencias.arrecadacaoAnual === ARRECADACAO_REFERENCIA.anual && semVigencia.referencias.fontePib === PIB_REFERENCIA.fonte, 'Sem vigência hoje, o serviço cai nas referências do domínio');
+assert(new CivicPressureService().generateExecutiveReport().includes('32,22% do PIB'), 'Nota técnica cita a carga tributária de 32,22%');
+assert(REFERENCIAS_BASE.every(r => r.url.startsWith('https://')) && !REFERENCIAS_BASE.some(r => /sbtnews/.test(r.url)) && REFERENCIAS_BASE.some(r => r.url.includes('sidra.ibge.gov.br')), 'Dados do cálculo citam Tesouro e IBGE (SIDRA), não matéria de jornal');
 
 console.log(`\n========================================`);
 console.log(`Total: ${passed + failed} | Passou: ${passed} | Falhou: ${failed}`);

@@ -1,11 +1,11 @@
-import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261119-1122';
-import { SETORES } from '../domain/SetorConsumo.js?v=20261119-1122';
-import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261119-1122';
-import { ARRECADACAO_REFERENCIA, OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261119-1122';
-import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261119-1122';
-import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261119-1122';
-import { SvgIcons } from './SvgIcons.js?v=20261119-1122';
-import { CenarioUrl } from './CenarioUrl.js?v=20261119-1122';
+import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261119-1256';
+import { SETORES } from '../domain/SetorConsumo.js?v=20261119-1256';
+import { TIPOS_GREVE, ORGAOS_PUBLICOS, setoresDoTipo } from '../domain/TiposGreve.js?v=20261119-1256';
+import { OTICA_RENDA, posicaoNaEscala } from '../domain/ArrecadacaoReferencia.js?v=20261119-1256';
+import { GREVE_CAMINHONEIROS_2018, IPCA_2018, ORIGEM_CUSTO, obterGreve, ordenarGreves, custoPorDia, compararComGreve, listarReferencias } from '../domain/CasosReais.js?v=20261119-1256';
+import { DIREITOS, AVISO_DIREITOS } from '../domain/DireitosGreve.js?v=20261119-1256';
+import { SvgIcons } from './SvgIcons.js?v=20261119-1256';
+import { CenarioUrl } from './CenarioUrl.js?v=20261119-1256';
 
 const brl = CivicPressureModel.formatBRL;
 const pct = (v, casas = 2) => `${Number(v).toFixed(casas).replace('.', ',')}%`;
@@ -631,7 +631,7 @@ export class CivicView {
     if (barra) barra.style.width = `${posicaoNaEscala(r.pctArrecadacao)}%`;
     this._texto('cResFaseTitulo', r.faseFiscal.titulo);
     this._texto('cResFaseDesc', r.faseFiscal.desc);
-    this._texto('lblArrecRef', `Arrecadação no período: ${brl(r.arrecadacaoPeriodo)} (${ARRECADACAO_REFERENCIA.fonte}). Fases do simulador, não uma regra científica.`);
+    this._texto('lblArrecRef', `Arrecadação no período: ${brl(r.arrecadacaoPeriodo)} (${this.service.referencias.fonteArrecadacao}). Fases do simulador, não uma regra científica.`);
   }
 
   _renderDivisao(divisao) {

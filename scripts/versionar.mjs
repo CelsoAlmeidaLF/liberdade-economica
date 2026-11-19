@@ -49,7 +49,10 @@ for (const p of arquivos) {
 }
 const fontes = join(raiz, 'vendor', 'fonts');
 for (const nome of readdirSync(fontes)) if (nome.endsWith('.woff2')) shell.push(`vendor/fonts/${nome}`);
-shell.push(`vendor/stk-gov/stk-gov-shell.js?v=${versao}`, `vendor/stk-gov/stk-gov-pwa.js?v=${versao}`, `vendor/stk-gov/stk-gov-config.js?v=${versao}`, 'icons/icon-512.png', 'icons/icon-maskable-512.png');
+// vendor/stk-gov/*.js: varre a pasta em vez de listar à mão, para o próximo arquivo comum não ficar de fora do offline (ADR-001, D7)
+const comum = join(raiz, 'vendor', 'stk-gov');
+for (const nome of readdirSync(comum)) if (nome.endsWith('.js')) shell.push(`vendor/stk-gov/${nome}?v=${versao}`);
+shell.push('icons/icon-512.png', 'icons/icon-maskable-512.png');
 const unicos = [...new Set(shell)];
 const swPath = join(raiz, 'sw.js');
 const sw = readFileSync(swPath, 'utf8').replace(/\/\/ <versionar>[\s\S]*?\/\/ <\/versionar>/,

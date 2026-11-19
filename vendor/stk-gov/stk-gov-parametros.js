@@ -1,0 +1,957 @@
+// GERADO por _design-system/parametros/gerar.mjs a partir de parametros.json (ADR-001). Não edite aqui:
+// edite o JSON no _design-system e rode: node _design-system/sync.mjs
+const BRUTO = {
+  "versaoEsquema": 1,
+  "atualizadoEm": "2026-11-19",
+  "parametros": {
+    "carga_tributaria_bruta_gg": {
+      "nome": "Carga tributária bruta do governo geral (União, estados e municípios)",
+      "unidade": "% do PIB",
+      "forma": "escalar",
+      "apps": [
+        "8.3",
+        "8.5"
+      ],
+      "vigencias": [
+        {
+          "valor": 32.22,
+          "vigenteDesde": "2024-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2024-12-31",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Tesouro Nacional, Boletim da Carga Tributária Bruta do Governo Geral 2025 (revisão de abr/2026)",
+            "url": "https://cdn.tesouro.gov.br/sistemas-internos/apex/producao/sistemas/thot/arquivos/publicacoes/54334_1699660/Boletim_CTB_2025.pdf"
+          },
+          "nota": "Sem FGTS e sem Sistema S (padrão do Manual de Estatísticas de Finanças Públicas do FMI, 2014). Revisão do número de 2024: a prévia de mar/2025 dizia 32,32. A Receita Federal, com metodologia própria, dá 32,20. O 34,20 que a 8.3 usava seguia o critério antigo, com FGTS e Sistema S (pela Receita, 34,12 em 2024), e não tinha fonte; saiu. Conferido pela Marly em 19/11/2026."
+        }
+      ]
+    },
+    "pib_nominal_anual": {
+      "nome": "PIB nominal do ano fechado (Contas Nacionais Anuais)",
+      "unidade": "BRL tri",
+      "forma": "escalar",
+      "apps": [
+        "8.5"
+      ],
+      "vigencias": [
+        {
+          "valor": 11.779251,
+          "vigenteDesde": "2024-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2024-12-31",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "IBGE, Contas Nacionais Anuais, SIDRA tabela 6784, variável 9808 (R$ 11.779.251 milhões)",
+            "url": "https://sidra.ibge.gov.br/tabela/6784"
+          },
+          "nota": "Substitui os R$ 11,7 tri da 8.5, que citavam uma matéria do SBT News. Não é o PIB de 12 meses (pib_nominal_12m), que é outro conceito. Conferido pela Marly em 19/11/2026."
+        }
+      ]
+    },
+    "pib_nominal_12m": {
+      "nome": "PIB nominal dos últimos 12 meses (valor de referência; ao vivo na 8.3)",
+      "unidade": "BRL tri",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 13.4,
+          "vigenteDesde": "2026-09-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-09-30",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Banco Central do Brasil, SGS 4382 (PIB acumulado em 12 meses, R$ correntes)",
+            "url": "https://api.bcb.gov.br/dados/serie/bcdata.sgs.4382/dados/ultimos/13?formato=json"
+          },
+          "nota": "Referência de set/2026 usada offline; com rede, o valor ao vivo vence (D5). Casa com a DBGG % do PIB do BCB, que usa este mesmo PIB. Não é o PIB de 2024."
+        }
+      ]
+    },
+    "pib_real_projecao": {
+      "nome": "Crescimento real do PIB projetado",
+      "unidade": "% a.a.",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 2,
+          "vigenteDesde": "2026-10-28",
+          "vigenteAte": null,
+          "dataReferencia": "2026-10-28",
+          "tipo": "estimativa",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Premissa do modelo (o código citava SPE/Fazenda, sem link nem data)",
+            "url": null
+          },
+          "nota": "Decidir uma fonte: Boletim Macrofiscal da SPE ou mediana do Focus (a confirmar pela Marly). Valor hoje em MacroState.pibReal."
+        }
+      ]
+    },
+    "receita_uniao_pct_pib": {
+      "nome": "Receita da União em % do PIB (calibração do simulador da dívida)",
+      "unidade": "% do PIB",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 19.25,
+          "vigenteDesde": "2026-10-28",
+          "vigenteAte": null,
+          "dataReferencia": "2026-10-28",
+          "tipo": "estimativa",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Sem fonte (a confirmar pela Marly; candidatos: Resultado do Tesouro Nacional, receita líquida, ou derivar do RREO)",
+            "url": null
+          },
+          "nota": "Era o literal 0.1925 em DebtTrajectoryModel. A recomendação do ADR é derivar do RREO dividido pelo PIB de 12 meses, em vez de manter um número fixo."
+        }
+      ]
+    },
+    "despesa_uniao_pct_pib": {
+      "nome": "Despesa da União em % do PIB (calibração do simulador da dívida)",
+      "unidade": "% do PIB",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 19.4,
+          "vigenteDesde": "2026-10-28",
+          "vigenteAte": null,
+          "dataReferencia": "2026-10-28",
+          "tipo": "estimativa",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Sem fonte (a confirmar pela Marly; candidato: Resultado do Tesouro Nacional, despesa total)",
+            "url": null
+          },
+          "nota": "Era o literal 0.194 em DebtTrajectoryModel."
+        }
+      ]
+    },
+    "custo_selic_ponto_bi": {
+      "nome": "Custo da dívida por ponto percentual de Selic",
+      "unidade": "BRL bi / p.p.",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 50,
+          "vigenteDesde": "2026-10-28",
+          "vigenteAte": null,
+          "dataReferencia": "2026-10-28",
+          "tipo": "estimativa",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Sem fonte (a confirmar pela Marly; candidato: Tesouro, Relatório Anual da Dívida / PAF, sensibilidade da DPF à Selic)",
+            "url": null
+          },
+          "nota": "Estava repetido em MacroState, DebtTrajectoryModel e SensibilityMatrixModel."
+        }
+      ]
+    },
+    "eleitorado_tse": {
+      "nome": "Eleitorado apto (Eleições 2026, 1º turno, com o exterior)",
+      "unidade": "eleitores",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 158745502,
+          "vigenteDesde": "2026-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "TSE, Estatísticas do eleitorado (2026)",
+            "url": "https://www.tse.jus.br/eleicoes/estatisticas/estatisticas-de-eleitorado"
+          },
+          "nota": "Número conferido só pelo link do rodapé da 8.3; falta a Marly conferir o valor."
+        }
+      ]
+    },
+    "populacao_residente": {
+      "nome": "População residente estimada (valor de referência; ao vivo na 8.3)",
+      "unidade": "pessoas",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 214211951,
+          "vigenteDesde": "2026-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "IBGE, SIDRA tabela 6579, variável 9324",
+            "url": "https://sidra.ibge.gov.br/tabela/6579"
+          }
+        }
+      ]
+    },
+    "meta_resultado_primario": {
+      "nome": "Meta de resultado primário da União (LDO)",
+      "unidade": "% do PIB",
+      "forma": "escalar",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": 0.25,
+          "vigenteDesde": "2026-01-01",
+          "vigenteAte": "2026-12-31",
+          "dataReferencia": "2026-12-31",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "LDO 2026 (Lei 15.321/2025), banda de 0 a 0,5% do PIB",
+            "url": null
+          },
+          "lei": "Lei 15.321/2025 (LDO 2026)",
+          "nota": "Número da lei veio de fonte secundária (Agência Senado); texto no Planalto não conferido. A LDO 2027 ainda não foi sancionada."
+        }
+      ]
+    },
+    "taxa_neutra_juros": {
+      "nome": "Taxa de juros real neutra (r*)",
+      "unidade": "% a.a. real",
+      "forma": "escalar",
+      "apps": [
+        "8.5"
+      ],
+      "vigencias": [
+        {
+          "valor": 5,
+          "vigenteDesde": "2026-09-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-09-30",
+          "tipo": "estimativa",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Banco Central, Relatório de Política Monetária de set/2026 (cenário de referência)",
+            "url": "https://www.bcb.gov.br/content/ri/relatorioinflacao/202609/rpm202609p.pdf"
+          },
+          "nota": "Usada só na etapa 4 (regra de Taylor). a confirmar pela Marly."
+        }
+      ]
+    },
+    "coef_repasse_cambial": {
+      "nome": "Coeficiente de repasse cambial para o IPCA (12 meses)",
+      "unidade": "fração",
+      "forma": "escalar",
+      "apps": [
+        "8.5"
+      ],
+      "vigencias": [
+        {
+          "valor": 0.1,
+          "vigenteDesde": "2026-03-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-03-31",
+          "tipo": "estimativa",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Banco Central, boxe 'Repasse cambial: estimativas por projeções locais' (RPM de mar/2026)",
+            "url": "https://www.bcb.gov.br/content/ri/relatorioinflacao/202603/rpm202603b8p.pdf"
+          },
+          "nota": "Usado só na etapa 4. 24 meses: 0,16. a confirmar pela Marly."
+        }
+      ]
+    },
+    "salario_minimo": {
+      "nome": "Salário mínimo nacional (valor mensal)",
+      "unidade": "BRL/mês",
+      "forma": "escalar",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": 1518,
+          "vigenteDesde": "2025-01-01",
+          "vigenteAte": "2025-12-31",
+          "dataReferencia": "2025-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Decreto de dezembro de 2024 (número e link a confirmar pela Marly)",
+            "url": null
+          },
+          "nota": "Valor citado na spec (caso de teste 4.1 T1). Falta a Marly conferir o decreto."
+        },
+        {
+          "valor": 1621,
+          "vigenteDesde": "2026-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Decreto 12.797, de 23/12/2025 (DOU de 24/12/2025)",
+            "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2025/decreto/d12797.htm"
+          },
+          "lei": "Decreto 12.797/2025",
+          "nota": "Valor que estava em scripts/build_data.py (MINIMUM_WAGE). A proposta do PLOA 2027 (R$ 1.741) não entra: o decreto sai em dez/jan."
+        }
+      ]
+    },
+    "regra_salario_minimo": {
+      "nome": "Regra de reajuste do salário mínimo",
+      "unidade": "regra",
+      "forma": "regra",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": {
+            "indiceInflacao": "INPC",
+            "janelaInflacao": "12 meses até novembro de t-1",
+            "defasagemPib": 2,
+            "ganhoRealPiso": 0.6,
+            "ganhoRealTeto": 2.5,
+            "arredondamento": "teto-inteiro"
+          },
+          "vigenteDesde": "2025-01-01",
+          "vigenteAte": "2030-12-31",
+          "dataReferencia": "2025-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Lei 14.663/2023, art. 3º, §§ 1º a 6º; limite do ganho real pela Lei 15.077/2024, art. 4º",
+            "url": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/lei/L15077.htm"
+          },
+          "lei": "Lei 14.663/2023, art. 3º; Lei 15.077/2024, art. 4º",
+          "nota": "Ganho real = PIB real de t-2, limitado a 0,6% a 2,5% de 2025 a 2030 (art. 5º da LC 200/2023). PIB negativo: só o INPC. Arredonda para o real inteiro de cima (Marly). Usada na etapa 2."
+        }
+      ]
+    },
+    "arcabouco_lc200": {
+      "nome": "Regras do arcabouço fiscal (LC 200/2023)",
+      "unidade": "regra",
+      "forma": "regra",
+      "apps": [
+        "8.3"
+      ],
+      "vigencias": [
+        {
+          "valor": {
+            "fracaoReceitaMetaCumprida": 0.7,
+            "fracaoReceitaMetaDescumprida": 0.5,
+            "ganhoRealPiso": 0.6,
+            "ganhoRealTeto": 2.5,
+            "bandaMetaPp": 0.25,
+            "janelaIpca": "12 meses até junho de t-1"
+          },
+          "vigenteDesde": "2023-08-30",
+          "vigenteAte": null,
+          "dataReferencia": "2023-08-30",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Lei Complementar 200, de 30/08/2023, arts. 4º a 7º; tolerância da meta no art. 11 (altera o art. 4º, § 5º, IV, da LRF)",
+            "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp200.htm"
+          },
+          "lei": "LC 200/2023, arts. 4º a 7º e 11",
+          "nota": "Usada na etapa 3."
+        }
+      ]
+    },
+    "tabela_irpf_mensal": {
+      "nome": "Tabela mensal do IRPF (rendimentos do trabalho)",
+      "unidade": "tabela",
+      "forma": "tabela",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": {
+            "faixas": [
+              {
+                "ate": 2428.8,
+                "aliquota": 0,
+                "deduzir": 0
+              },
+              {
+                "ate": 2826.65,
+                "aliquota": 0.075,
+                "deduzir": 182.16
+              },
+              {
+                "ate": 3751.05,
+                "aliquota": 0.15,
+                "deduzir": 394.16
+              },
+              {
+                "ate": 4664.68,
+                "aliquota": 0.225,
+                "deduzir": 675.49
+              },
+              {
+                "ate": null,
+                "aliquota": 0.275,
+                "deduzir": 908.73
+              }
+            ],
+            "descontoSimplificado": 607.2,
+            "deducaoDependente": 189.59
+          },
+          "vigenteDesde": "2025-05-01",
+          "vigenteAte": "2025-12-31",
+          "dataReferencia": "2025-05-31",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tributação de 2026 (a tabela de mai/2025 é a mesma de 2026, sem a redução)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 15.191/2025",
+          "nota": "Dependente e desconto simplificado: Lei 15.191/2025."
+        },
+        {
+          "valor": {
+            "faixas": [
+              {
+                "ate": 2428.8,
+                "aliquota": 0,
+                "deduzir": 0
+              },
+              {
+                "ate": 2826.65,
+                "aliquota": 0.075,
+                "deduzir": 182.16
+              },
+              {
+                "ate": 3751.05,
+                "aliquota": 0.15,
+                "deduzir": 394.16
+              },
+              {
+                "ate": 4664.68,
+                "aliquota": 0.225,
+                "deduzir": 675.49
+              },
+              {
+                "ate": null,
+                "aliquota": 0.275,
+                "deduzir": 908.73
+              }
+            ],
+            "descontoSimplificado": 607.2,
+            "deducaoDependente": 189.59,
+            "reducao": {
+              "limiteIsentoBruto": 5000,
+              "limiteSuperiorBruto": 7350,
+              "parcelaFixa": 978.62,
+              "coeficiente": 0.133145
+            }
+          },
+          "vigenteDesde": "2026-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tributação de 2026",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas/2026"
+          },
+          "lei": "Lei 15.191/2025 (tabela); Lei 15.270/2025, art. 3º-A da Lei 9.250 (redução)",
+          "nota": "A redução usa o rendimento BRUTO, não a base: até 5.000,00 zera o imposto; de 5.000,01 a 7.350,00 vale parcelaFixa − coeficiente × bruto, limitada ao imposto. Conferido pelo Daniel em 19/11/2026."
+        }
+      ]
+    },
+    "tabela_inss_empregado": {
+      "nome": "Tabela do INSS do empregado (alíquotas progressivas)",
+      "unidade": "tabela",
+      "forma": "tabela",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": {
+            "faixas": [
+              {
+                "ate": 1621,
+                "aliquota": 0.075
+              },
+              {
+                "ate": 2902.84,
+                "aliquota": 0.09
+              },
+              {
+                "ate": 4354.27,
+                "aliquota": 0.12
+              },
+              {
+                "ate": 8475.55,
+                "aliquota": 0.14
+              }
+            ]
+          },
+          "vigenteDesde": "2026-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Portaria interministerial de 2026 (número e link a confirmar pela Marly)",
+            "url": null
+          },
+          "lei": "Portaria interministerial MPS/MF de 2026 (número a confirmar)",
+          "nota": "Valores usados pelo Daniel nos casos de teste do IRPF (19/11/2026). Falta a Marly conferir a portaria; até lá o resultado pessoal fica como estimativa."
+        }
+      ]
+    },
+    "irpf_isencao_mensal": {
+      "nome": "Limite mensal de isenção da tabela do IRPF (histórico)",
+      "unidade": "BRL/mês",
+      "forma": "escalar",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": 900,
+          "vigenteDesde": "1996-01-01",
+          "vigenteAte": "2001-12-31",
+          "dataReferencia": "1996-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 9.250/1995"
+        },
+        {
+          "valor": 1058,
+          "vigenteDesde": "2002-01-01",
+          "vigenteAte": "2004-12-31",
+          "dataReferencia": "2002-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "nota": "Antes de 2007 a Receita publica o valor anual; aqui está dividido por 12. Lei não citada pela Receita; valor a conferir pela Marly."
+        },
+        {
+          "valor": 1164,
+          "vigenteDesde": "2005-01-01",
+          "vigenteAte": "2005-12-31",
+          "dataReferencia": "2005-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "nota": "Antes de 2007 a Receita publica o valor anual; aqui está dividido por 12. Lei não citada pela Receita; valor a conferir pela Marly."
+        },
+        {
+          "valor": 1249.36,
+          "vigenteDesde": "2006-01-01",
+          "vigenteAte": "2006-12-31",
+          "dataReferencia": "2006-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "nota": "Antes de 2007 a Receita publica o valor anual; aqui está dividido por 12. Lei não citada pela Receita; valor a conferir pela Marly."
+        },
+        {
+          "valor": 1313.69,
+          "vigenteDesde": "2007-01-01",
+          "vigenteAte": "2007-12-31",
+          "dataReferencia": "2007-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 11.482/2007"
+        },
+        {
+          "valor": 1372.81,
+          "vigenteDesde": "2008-01-01",
+          "vigenteAte": "2008-12-31",
+          "dataReferencia": "2008-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 11.482/2007"
+        },
+        {
+          "valor": 1434.59,
+          "vigenteDesde": "2009-01-01",
+          "vigenteAte": "2009-12-31",
+          "dataReferencia": "2009-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 11.945/2009"
+        },
+        {
+          "valor": 1499.15,
+          "vigenteDesde": "2010-01-01",
+          "vigenteAte": "2011-03-31",
+          "dataReferencia": "2010-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 11.945/2009"
+        },
+        {
+          "valor": 1566.61,
+          "vigenteDesde": "2011-04-01",
+          "vigenteAte": "2011-12-31",
+          "dataReferencia": "2011-04-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 12.469/2011"
+        },
+        {
+          "valor": 1637.11,
+          "vigenteDesde": "2012-01-01",
+          "vigenteAte": "2012-12-31",
+          "dataReferencia": "2012-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 12.469/2011"
+        },
+        {
+          "valor": 1710.78,
+          "vigenteDesde": "2013-01-01",
+          "vigenteAte": "2013-12-31",
+          "dataReferencia": "2013-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 12.469/2011"
+        },
+        {
+          "valor": 1787.77,
+          "vigenteDesde": "2014-01-01",
+          "vigenteAte": "2015-03-31",
+          "dataReferencia": "2014-01-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 12.469/2011"
+        },
+        {
+          "valor": 1903.98,
+          "vigenteDesde": "2015-04-01",
+          "vigenteAte": "2023-04-30",
+          "dataReferencia": "2015-04-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 13.149/2015"
+        },
+        {
+          "valor": 2112,
+          "vigenteDesde": "2023-05-01",
+          "vigenteAte": "2024-01-31",
+          "dataReferencia": "2023-05-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 14.663/2023"
+        },
+        {
+          "valor": 2259.2,
+          "vigenteDesde": "2024-02-01",
+          "vigenteAte": "2025-04-30",
+          "dataReferencia": "2024-02-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 14.848/2024"
+        },
+        {
+          "valor": 2428.8,
+          "vigenteDesde": "2025-05-01",
+          "vigenteAte": null,
+          "dataReferencia": "2025-05-01",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "Receita Federal, Tabelas do IRPF (anos anteriores e 2026)",
+            "url": "https://www.gov.br/receitafederal/pt-br/assuntos/meu-imposto-de-renda/tabelas"
+          },
+          "lei": "Lei 15.191/2025"
+        }
+      ]
+    },
+    "ipca_numero_indice": {
+      "nome": "IPCA, número-índice (dez/1993 = 100)",
+      "unidade": "índice",
+      "forma": "tabela",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": {
+            "1995-12": 1244.23,
+            "2025-12": 7403.29,
+            "2026-10": 7706.59
+          },
+          "vigenteDesde": "1993-12-01",
+          "vigenteAte": null,
+          "dataReferencia": "2026-10-31",
+          "tipo": "oficial",
+          "status": "confirmado",
+          "fonte": {
+            "titulo": "IBGE, SIDRA tabela 1737, variável 2266",
+            "url": "https://sidra.ibge.gov.br/tabela/1737"
+          },
+          "nota": "Meses guardados como 'aaaa-mm'. O app usa o par (mês base, mês alvo). Conferido pela Marly e pelo Daniel em 19/11/2026."
+        }
+      ]
+    },
+    "dieese_fator_salario_liquido": {
+      "nome": "Fração do salário mínimo que sobra depois da Previdência (DIEESE)",
+      "unidade": "fração",
+      "forma": "escalar",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": 0.925,
+          "vigenteDesde": "2016-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2016-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "DIEESE, metodologia da Cesta Básica (desconto de 7,5% da Previdência)",
+            "url": "https://www.dieese.org.br/metodologia/metodologiaCestaBasica2016.pdf"
+          },
+          "nota": "Estava em BasketCalculator.js e em build_data.py."
+        }
+      ]
+    },
+    "jornada_mensal_horas": {
+      "nome": "Jornada mensal usada pelo DIEESE",
+      "unidade": "h/mês",
+      "forma": "escalar",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": 220,
+          "vigenteDesde": "2016-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2016-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "DIEESE, metodologia; CF art. 7º, XIII (44 h semanais)",
+            "url": "https://www.dieese.org.br/metodologia/metodologiaCestaBasica2016.pdf"
+          },
+          "lei": "CF/1988, art. 7º, XIII",
+          "nota": "Estava em BasketCalculator.js e em build_data.py."
+        }
+      ]
+    },
+    "jornada_diaria_horas": {
+      "nome": "Jornada de um dia comum",
+      "unidade": "h/dia",
+      "forma": "escalar",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": 8,
+          "vigenteDesde": "2016-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2016-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "CF art. 7º, XIII",
+            "url": "https://www.dieese.org.br/metodologia/metodologiaCestaBasica2016.pdf"
+          },
+          "lei": "CF/1988, art. 7º, XIII"
+        }
+      ]
+    },
+    "cestas_por_familia": {
+      "nome": "Cestas que uma família consome (2 adultos e 2 crianças = 3 adultos)",
+      "unidade": "cestas",
+      "forma": "escalar",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": 3,
+          "vigenteDesde": "2016-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2016-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "DIEESE, metodologia da Cesta Básica",
+            "url": "https://www.dieese.org.br/metodologia/metodologiaCestaBasica2016.pdf"
+          }
+        }
+      ]
+    },
+    "participacao_alimentacao_orcamento": {
+      "nome": "Participação da alimentação no orçamento (POF 1994/1995)",
+      "unidade": "fração",
+      "forma": "escalar",
+      "apps": [
+        "8.6"
+      ],
+      "vigencias": [
+        {
+          "valor": 0.3571,
+          "vigenteDesde": "2016-01-01",
+          "vigenteAte": null,
+          "dataReferencia": "2016-01-01",
+          "tipo": "oficial",
+          "status": "a-confirmar",
+          "fonte": {
+            "titulo": "DIEESE, metodologia (POF 1994/1995)",
+            "url": "https://www.dieese.org.br/metodologia/metodologiaCestaBasica2016.pdf"
+          }
+        }
+      ]
+    }
+  }
+};
+
+function congelar(objeto) {
+  for (const valor of Object.values(objeto)) if (valor && typeof valor === 'object') congelar(valor);
+  return Object.freeze(objeto);
+}
+
+export const PARAMETROS = congelar(BRUTO);
+
+/** Data como texto ISO local (aaaa-mm-dd); aceita Date ou o próprio texto ISO. */
+function paraIso(data) {
+  if (typeof data === 'string') return data.slice(0, 10);
+  const dois = n => String(n).padStart(2, '0');
+  return `${data.getFullYear()}-${dois(data.getMonth() + 1)}-${dois(data.getDate())}`;
+}
+
+/**
+ * Vigência em vigor numa data: vigenteDesde <= data <= vigenteAte (null = em vigor).
+ * Mesma regra do build Python da 8.6; os dois rodam os casos de casos-vigencia.json.
+ * @param {Array<{vigenteDesde: string, vigenteAte: string|null}>} vigencias
+ * @param {Date|string} data
+ */
+export function escolherVigencia(vigencias, data) {
+  const iso = paraIso(data);
+  return vigencias.find(v => v.vigenteDesde <= iso && (v.vigenteAte === null || iso <= v.vigenteAte));
+}
+
+function parametro(id) {
+  const p = PARAMETROS.parametros[id];
+  if (!p) throw new Error(`Parâmetro desconhecido: ${id}`);
+  return p;
+}
+
+/** Vigência do parâmetro na data (padrão: hoje), ou undefined se houver lacuna. Lança Error se o id não existir. */
+export function vigencia(id, data = new Date()) {
+  return escolherVigencia(parametro(id).vigencias, data);
+}
+
+/** Valor do parâmetro na data (padrão: hoje), ou undefined se houver lacuna. Lança Error se o id não existir. */
+export function valor(id, data = new Date()) {
+  return vigencia(id, data)?.valor;
+}
+
+/** Todas as vigências, da mais antiga para a mais nova. */
+export function historico(id) {
+  return [...parametro(id).vigencias].sort((a, b) => a.vigenteDesde.localeCompare(b.vigenteDesde));
+}
+
+/**
+ * Insumo no formato do envelope de resultado (spec 2.1), pronto para entrar em Resultado.insumos.
+ * @returns {{id: string, valor: *, tipo: string, status: string, periodo: string}}
+ */
+export function insumo(id, data = new Date()) {
+  const v = vigencia(id, data);
+  if (!v) throw new Error(`Parâmetro ${id} sem vigência em ${paraIso(data)}`);
+  return { id, valor: v.valor, tipo: v.tipo, status: v.status, periodo: v.dataReferencia };
+}
+
+/**
+ * Selo do resultado, igual nos três apps: 'exato' só quando a fórmula é identidade contábil ou regra de lei
+ * (formulaExata) e todos os insumos são oficiais e confirmados. Um insumo estimativa ou a-confirmar basta para 'estimativa'.
+ * @param {Array<{tipo: string, status: string}>} insumos
+ * @param {boolean} [formulaExata=true]
+ * @returns {'exato'|'estimativa'}
+ */
+export function selo(insumos, formulaExata = true) {
+  return formulaExata && insumos.every(i => i.tipo === 'oficial' && i.status === 'confirmado') ? 'exato' : 'estimativa';
+}

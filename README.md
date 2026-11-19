@@ -24,7 +24,7 @@ A engrenagem do topo abre o painel comum: tema (escuro, claro ou do sistema), o 
 | Tipo | Como o impacto é calculado |
 |---|---|
 | Consumo | Pessoas × gasto evitado × dias; imposto embutido no preço e parte só adiada (seções abaixo) |
-| Transporte, geral e categoria | PIB por dia (R$ 11,7 tri / 365) × peso do setor × adesão × dias × cascata, menos a produção recuperada depois |
+| Transporte, geral e categoria | PIB por dia (R$ 11,78 tri / 365) × peso do setor × adesão × dias × cascata, menos a produção recuperada depois |
 | Setor público | Servidores parados × salário diário × dias (o governo mede o próprio produto pelo custo) e fila de atendimentos acumulada |
 
 Cascata do transporte de carga **calibrada pela greve de 2018**: 0,2% do PIB em 11 dias com 80% de adesão dá multiplicador de ~4,15. As demais cascatas, pesos e valores do setor público são estimativas ajustáveis.
@@ -86,7 +86,7 @@ Cada setor traz tributo no preço, gasto adiado típico e partilha entre ICMS, P
 | Lazer, bares e restaurantes | 30% | 20% |
 
 ### 3. Peso na arrecadação e fases (`ArrecadacaoReferencia.js`)
-A perda definitiva é comparada com a arrecadação de União, estados e municípios no mesmo período: R$ 3,78 tri/ano (carga tributária bruta 2024 de 32,3% do PIB, Tesouro Nacional, × PIB 2024 de R$ 11,7 tri, IBGE).
+A perda definitiva é comparada com a arrecadação de União, estados e municípios no mesmo período: R$ 3,80 tri/ano (carga tributária bruta 2024 de 32,22% do PIB, Tesouro Nacional, Boletim CTB 2025, × PIB 2024 de R$ 11,78 tri, IBGE, SIDRA 6784). Os dois números vêm do módulo comum de parâmetros (`vendor/stk-gov/stk-gov-parametros.js`, cópia de `../_design-system/parametros/`), os mesmos da Calculadora (8.3); antes a 8.5 usava 32,3% e R$ 11,7 tri (esta última citava uma matéria de jornal).
 
 | Fase | Perda definitiva / arrecadação do período |
 |---|---|

@@ -2,15 +2,19 @@
  * Camada de Domínio: ArrecadacaoReferencia
  * Arrecadação anual de União, estados e municípios, usada para medir o peso do boicote.
  */
+// Valores de referência do módulo comum de parâmetros (carga_tributaria_bruta_gg e pib_nominal_anual, ADR-001).
+// O serviço lê os parâmetros e passa os números aos modelos; estes servem de padrão dos modelos e o teste confere que são iguais.
+const CARGA_TRIBUTARIA_2024_PCT = 32.22; // Tesouro Nacional, Boletim CTB 2025 (revisão de abr/2026); a prévia de mar/2025 dizia 32,32
+const PIB_2024 = 11.779251e12;           // IBGE, Contas Nacionais Anuais, SIDRA 6784 (R$ 11.779.251 milhões)
+
 export const ARRECADACAO_REFERENCIA = Object.freeze({
-  // Carga tributária bruta de 2024: 32,3% do PIB (Tesouro Nacional) × PIB de R$ 11,7 tri (IBGE)
-  anual: 3.78e12,
-  fonte: 'Carga tributária bruta 2024 (32,3% do PIB, Tesouro Nacional) × PIB 2024 (R$ 11,7 tri, IBGE)'
+  anual: PIB_2024 * CARGA_TRIBUTARIA_2024_PCT / 100,
+  fonte: 'Carga tributária bruta 2024 (32,22% do PIB, Tesouro Nacional) × PIB 2024 (R$ 11,78 tri, IBGE)'
 });
 
 export const PIB_REFERENCIA = Object.freeze({
-  anual: 11.7e12,
-  fonte: 'PIB de 2024 (R$ 11,7 tri, IBGE)'
+  anual: PIB_2024,
+  fonte: 'PIB de 2024 (R$ 11,78 tri, IBGE)'
 });
 
 /**

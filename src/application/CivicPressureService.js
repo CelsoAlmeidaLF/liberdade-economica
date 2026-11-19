@@ -1,23 +1,54 @@
-import { CivicState } from '../domain/CivicState.js?v=20261119-1122';
-import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261119-1122';
-import { SectorDrainageModel } from '../domain/SectorDrainageModel.js?v=20261119-1122';
-import { GreveProducaoModel } from '../domain/GreveProducaoModel.js?v=20261119-1122';
-import { DivisaoCusto } from '../domain/DivisaoCusto.js?v=20261119-1122';
-import { obterSetor } from '../domain/SetorConsumo.js?v=20261119-1122';
-import { obterTipo, obterSetorProducao, obterOrgao } from '../domain/TiposGreve.js?v=20261119-1122';
-import { ARRECADACAO_REFERENCIA, PIB_REFERENCIA, OTICA_RENDA, classificarFase } from '../domain/ArrecadacaoReferencia.js?v=20261119-1122';
-import { GREVE_CAMINHONEIROS_2018, compararComGreve } from '../domain/CasosReais.js?v=20261119-1122';
-import { CsvExporter } from '../infrastructure/CsvExporter.js?v=20261119-1122';
+import { CivicState } from '../domain/CivicState.js?v=20261119-1256';
+import { CivicPressureModel } from '../domain/CivicPressureModel.js?v=20261119-1256';
+import { SectorDrainageModel } from '../domain/SectorDrainageModel.js?v=20261119-1256';
+import { GreveProducaoModel } from '../domain/GreveProducaoModel.js?v=20261119-1256';
+import { DivisaoCusto } from '../domain/DivisaoCusto.js?v=20261119-1256';
+import { obterSetor } from '../domain/SetorConsumo.js?v=20261119-1256';
+import { obterTipo, obterSetorProducao, obterOrgao } from '../domain/TiposGreve.js?v=20261119-1256';
+import { ARRECADACAO_REFERENCIA, PIB_REFERENCIA, OTICA_RENDA, classificarFase } from '../domain/ArrecadacaoReferencia.js?v=20261119-1256';
+import { GREVE_CAMINHONEIROS_2018, compararComGreve } from '../domain/CasosReais.js?v=20261119-1256';
+import { CsvExporter } from '../infrastructure/CsvExporter.js?v=20261119-1256';
+import { ParametrosVendor } from '../infrastructure/ParametrosVendor.js?v=20261119-1256';
 
 /**
  * Camada de Aplicação: CivicPressureService
  * Orquestrador de simulações, agregação de dados e emissão de notas técnicas.
  */
 export class CivicPressureService {
-  constructor({ ibgeGateway, initialState = null } = {}) {
+  /**
+   * @param {Object} [dependencies]
+   * @param {Object} [dependencies.ibgeGateway]
+   * @param {Object} [dependencies.initialState]
+   * @param {import('../infrastructure/ParametrosVendor.js?v=20261119-1256').ParametrosVendor} [dependencies.parametros] ParametrosPort (módulo comum, ADR-001)
+   */
+  constructor({ ibgeGateway, initialState = null, parametros = new ParametrosVendor() } = {}) {
     this.ibgeGateway = ibgeGateway;
+    this.parametros = parametros;
+    this.referencias = CivicPressureService.referenciasDe(parametros);
     this.state = initialState || CivicState.createDefault();
     this.listeners = new Set();
+  }
+
+  /**
+   * PIB e arrecadação de referência a partir do módulo comum de parâmetros (carga tributária bruta e PIB de 2024).
+   * Parâmetro sem vigência hoje: cai nos valores de ArrecadacaoReferencia.
+   * @param {Object} parametros ParametrosPort
+   * @returns {{pibAnual: number, arrecadacaoAnual: number, fontePib: string, fonteArrecadacao: string}}
+   */
+  static referenciasDe(parametros) {
+    const cargaPct = parametros.valor('carga_tributaria_bruta_gg');
+    const pibTri = parametros.valor('pib_nominal_anual');
+    if (cargaPct === undefined || pibTri === undefined) {
+      return { pibAnual: PIB_REFERENCIA.anual, arrecadacaoAnual: ARRECADACAO_REFERENCIA.anual, fontePib: PIB_REFERENCIA.fonte, fonteArrecadacao: ARRECADACAO_REFERENCIA.fonte };
+    }
+    const virgula = (v, casas) => v.toFixed(casas).replace('.', ',');
+    const pibAnual = pibTri * 1e12;
+    return {
+      pibAnual,
+      arrecadacaoAnual: pibAnual * cargaPct / 100,
+      fontePib: `PIB de 2024 (R$ ${virgula(pibTri, 2)} tri, IBGE)`,
+      fonteArrecadacao: `Carga tributária bruta 2024 (${virgula(cargaPct, 2)}% do PIB, Tesouro Nacional) × PIB 2024 (R$ ${virgula(pibTri, 2)} tri, IBGE)`
+    };
   }
 
   subscribe(callback) {
@@ -104,7 +135,7 @@ export class CivicPressureService {
   calculateSimulation() {
     const s = this.state;
     const tipo = obterTipo(s.tipoGreve);
-    const arrecadacaoPeriodo = (ARRECADACAO_REFERENCIA.anual / 365) * Math.max(1, s.dias);
+    const arrecadacaoPeriodo = (this.referencias.arrecadacaoAnual / 365) * Math.max(1, s.dias);
 
     if (tipo.id === 'publico') {
       const orgao = obterOrgao(s.orgao);
@@ -140,7 +171,8 @@ export class CivicPressureService {
         dias: s.dias,
         cascata: setorProducao.cascata,
         usarCascata: s.usarCascata,
-        recuperacaoPct: s.recuperacaoPct
+        recuperacaoPct: s.recuperacaoPct,
+        pibAnual: this.referencias.pibAnual
       });
       const pctArrecadacao = (producao.impostoPerdido / arrecadacaoPeriodo) * 100;
       return {
@@ -169,7 +201,8 @@ export class CivicPressureService {
       dias: s.dias,
       populacaoBase: s.populacao,
       taxRatio: s.taxRatio,
-      adiadoPct: s.adiadoPct
+      adiadoPct: s.adiadoPct,
+      arrecadacaoAnual: this.referencias.arrecadacaoAnual
     });
 
     const setor = obterSetor(s.setor);
@@ -288,7 +321,7 @@ ADESÃO (REFERÊNCIA DOS 3,5% - ERICA CHENOWETH / HARVARD):
 • Referência (3,5% da População): ${sim.civic.chenowethGoal.toLocaleString('pt-BR')} cidadãos
 • Progresso: ${sim.civic.progressoMetaChenoweth.toFixed(1).replace('.', ',')}% (${sim.civic.statusChenoweth})
 ` : ''}----------------------------------------------------------------------
-Referências: ${ARRECADACAO_REFERENCIA.fonte}; ${PIB_REFERENCIA.fonte}; ${OTICA_RENDA.fonte}.
+Referências: ${this.referencias.fonteArrecadacao}; ${this.referencias.fontePib}; ${OTICA_RENDA.fonte}.
 Pesos, cascatas e valores por setor são estimativas ajustáveis.
 Emissão: Liberdade Econômica (Systekna / STK-GOVERNO-BRAZIL).`;
   }
@@ -340,7 +373,7 @@ Emissão: Liberdade Econômica (Systekna / STK-GOVERNO-BRAZIL).`;
         ["Perda_Direta", p.perdaDireta, "BRL", "PIB/dia x peso x adesao x dias"],
         ["Perda_Cascata", p.perdaCascata, "BRL", "Outros setores"],
         ["Perda_Definitiva", p.perdaDefinitiva, "BRL", "Total menos o recuperado"],
-        ["Perda_Percentual_PIB", p.pctPib, "% do PIB anual", PIB_REFERENCIA.fonte],
+        ["Perda_Percentual_PIB", p.pctPib, "% do PIB anual", this.referencias.fontePib],
         ["Impostos_Perdidos", p.impostoPerdido, "BRL", "15,5% do valor (otica da renda)"],
         ["Peso_Na_Arrecadacao", sim.resumo.pctArrecadacao, "% da arrecadacao do periodo", "Impostos / arrecadacao"],
         ["Fase_Fiscal", texto(sim.resumo.faseFiscal.titulo), "Status", "Faixas do simulador"]

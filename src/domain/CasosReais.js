@@ -196,8 +196,8 @@ export const IPCA_2018 = Object.freeze({
  * Dados de base usados nos cálculos (PIB, arrecadação e divisão da renda)
  */
 export const REFERENCIAS_BASE = Object.freeze([
-  { titulo: 'Tesouro Nacional: carga tributária bruta do Governo Geral atinge 32,32% do PIB em 2024', url: 'https://www.gov.br/tesouronacional/pt-br/noticias/carga-tributaria-bruta-do-governo-geral-atinge-32-32-do-pib-em-2024' },
-  { titulo: 'IBGE: PIB cresce 3,4% em 2024 e fecha o ano em R$ 11,7 trilhões (SBT News)', url: 'https://sbtnews.sbt.com.br/noticia/economia/pib-cresce-3-4-em-2024-e-fecha-o-ano-em-r-11-7-trilhoes-diz-ibge' },
+  { titulo: 'Tesouro Nacional: Boletim da Carga Tributária Bruta do Governo Geral 2025 (32,22% do PIB em 2024, revisão de abr/2026)', url: 'https://cdn.tesouro.gov.br/sistemas-internos/apex/producao/sistemas/thot/arquivos/publicacoes/54334_1699660/Boletim_CTB_2025.pdf' },
+  { titulo: 'IBGE: Contas Nacionais Anuais, PIB de 2024 em R$ 11,78 trilhões (SIDRA tabela 6784)', url: 'https://sidra.ibge.gov.br/tabela/6784' },
   { titulo: 'IBGE: Contas Nacionais 2021, PIB pela ótica da renda (cópia do Poder360)', url: 'https://static.poder360.com.br/2023/11/pib-2021-ibge-48.pdf' }
 ]);
 
